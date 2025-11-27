@@ -225,7 +225,7 @@ const App: React.FC = () => {
   };
 
   const handleFeedback = () => {
-    window.location.href = "mailto:suporte@crentech.com.br?subject=Sugestão Bíblia CrenTech";
+    window.location.href = "mailto:artpantoja@gmail.com?subject=Sugestão Bíblia CrenTech";
     SoundEngine.playClick();
   };
 
