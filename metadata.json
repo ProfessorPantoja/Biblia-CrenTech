@@ -1,0 +1,7 @@
+{
+  "name": "Bíblia CrenTech",
+  "description": "Pesquisa bíblica instantânea por voz com contexto e hermenêutica inteligente.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
