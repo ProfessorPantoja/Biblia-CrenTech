@@ -1,77 +1,90 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title>Bíblia CrenTech - Experiência IA</title>
-    
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FEBGNVTT9V"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
 
-      gtag('config', 'G-FEBGNVTT9V');
-    </script>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Bíblia CrenTech - Consulta Rápida com IA</title>
+  <meta name="description"
+    content="Estude a Bíblia com inteligência artificial. Busca por voz, análise hermenêutica, versículos contextualizados e múltiplos temas. A tecnologia a serviço do Reino." />
+  <meta name="keywords"
+    content="Bíblia, IA, Estudo Bíblico, Teologia, Versículos, Busca por Voz, CrenTech, Inteligência Artificial, Devocional" />
 
-    <!-- PWA / Favicon -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
-    <meta name="theme-color" content="#0f172a">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Bíblia CrenTech - Consulta Rápida com IA" />
+  <meta property="og:description"
+    content="Estude a Bíblia com inteligência artificial. Busca por voz, análise hermenêutica e versículos contextualizados." />
+  <meta property="og:site_name" content="Bíblia CrenTech" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            fontFamily: {
-              serif: ['Merriweather', 'serif'],
-              sans: ['Inter', 'sans-serif'],
-              hand: ['Patrick Hand', 'cursive'],
-              gothic: ['Cinzel', 'serif'], // Medieval font
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-FEBGNVTT9V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-FEBGNVTT9V');
+  </script>
+
+  <!-- PWA / Favicon -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" href="/logo.png">
+  <meta name="theme-color" content="#450a0a">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Merriweather', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+            hand: ['Patrick Hand', 'cursive'],
+            gothic: ['Cinzel', 'serif'], // Medieval font
+          },
+          colors: {
+            bible: {
+              dark: '#0f172a',
+              paper: '#f8fafc',
+              gold: '#d4af37',
+              accent: '#3b82f6',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'glow': 'glow 2s ease-in-out infinite alternate',
+            'radar': 'radar 2s linear infinite',
+            'fire-pulse': 'firePulse 0.1s ease-in-out infinite alternate',
+            'breathing-glow': 'breathingGlow 3s ease-in-out infinite',
+          },
+          keyframes: {
+            glow: {
+              '0%': { boxShadow: '0 0 5px #d4af37, 0 0 10px #d4af37' },
+              '100%': { boxShadow: '0 0 20px #d4af37, 0 0 30px #ffbb00' },
             },
-            colors: {
-              bible: {
-                dark: '#0f172a',
-                paper: '#f8fafc',
-                gold: '#d4af37',
-                accent: '#3b82f6',
-              }
+            radar: {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' },
             },
-            animation: {
-              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'glow': 'glow 2s ease-in-out infinite alternate',
-              'radar': 'radar 2s linear infinite',
-              'fire-pulse': 'firePulse 0.1s ease-in-out infinite alternate',
-              'breathing-glow': 'breathingGlow 3s ease-in-out infinite',
+            firePulse: {
+              '0%': { transform: 'scale(1)', filter: 'brightness(100%)' },
+              '100%': { transform: 'scale(1.02)', filter: 'brightness(120%)' }
             },
-            keyframes: {
-              glow: {
-                '0%': { boxShadow: '0 0 5px #d4af37, 0 0 10px #d4af37' },
-                '100%': { boxShadow: '0 0 20px #d4af37, 0 0 30px #ffbb00' },
-              },
-              radar: {
-                '0%': { transform: 'rotate(0deg)' },
-                '100%': { transform: 'rotate(360deg)' },
-              },
-              firePulse: {
-                '0%': { transform: 'scale(1)', filter: 'brightness(100%)' },
-                '100%': { transform: 'scale(1.02)', filter: 'brightness(120%)' }
-              },
-              breathingGlow: {
-                '0%': { boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)', transform: 'scale(1)' },
-                '50%': { boxShadow: '0 0 25px rgba(59, 130, 246, 0.8), 0 0 50px rgba(59, 130, 246, 0.4)', transform: 'scale(1.02)' },
-                '100%': { boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)', transform: 'scale(1)' }
-              }
+            breathingGlow: {
+              '0%': { boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)', transform: 'scale(1)' },
+              '50%': { boxShadow: '0 0 25px rgba(59, 130, 246, 0.8), 0 0 50px rgba(59, 130, 246, 0.4)', transform: 'scale(1.02)' },
+              '100%': { boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)', transform: 'scale(1)' }
             }
           }
         }
       }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Patrick+Hand&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    }
+  </script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Patrick+Hand&family=Cinzel:wght@400;700&display=swap"
+    rel="stylesheet">
   <script type="importmap">
 {
   "imports": {
@@ -83,91 +96,132 @@
   }
 }
 </script>
-<style>
-  /* Custom Scrollbar */
-  .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-  .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); border-radius: 4px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background: currentColor; opacity: 0.3; border-radius: 4px; }
-  
-  /* Range Slider */
-  input[type=range] { -webkit-appearance: none; background: transparent; width: 100%; }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%;
-    background: currentColor; cursor: pointer; margin-top: -7px; 
-    box-shadow: 0 0 10px rgba(0,0,0,0.3); border: 2px solid #fff;
-  }
-  input[type=range]::-webkit-slider-runnable-track {
-    width: 100%; height: 4px; cursor: pointer; background: rgba(255, 255, 255, 0.2); border-radius: 2px;
-  }
-  input[type=range]:focus { outline: none; }
+  <style>
+    /* Custom Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
 
-  /* Theme Backgrounds */
-  .bg-stained-glass {
-    background-color: #0f172a;
-    background-image: 
-      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-      radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
-      radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
-  }
-  
-  .bg-parchment {
-    background-color: #f4e4bc;
-    background-image: url("https://www.transparenttextures.com/patterns/aged-paper.png");
-  }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+    }
 
-  /* --- REAL FIRE BUTTON EFFECT --- */
-  .btn-fire-container {
-    position: relative;
-    z-index: 1;
-  }
-  .btn-fire-container::before {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 10px;
-    right: 10px;
-    height: 40px;
-    background: rgba(255, 69, 0, 0.6);
-    filter: blur(20px);
-    z-index: -1;
-    animation: firePulse 0.5s infinite alternate;
-  }
-  
-  .fire-core {
-    background: radial-gradient(circle at 30% 30%, #ffd700, #ff4500, #8b0000);
-    box-shadow: 
-      0 0 10px #ff4500, 
-      0 0 20px #ff0000, 
-      inset 0 0 15px rgba(255,255,0,0.5);
-  }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: currentColor;
+      opacity: 0.3;
+      border-radius: 4px;
+    }
 
-  /* Hi-Tech Radar Effect */
-  .radar-ring {
-    border: 2px solid transparent;
-    border-top: 2px solid #00ff00;
-    border-right: 2px solid #00ff00;
-    border-radius: 50%;
-    animation: radar 1.5s linear infinite;
-  }
+    /* Range Slider */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: transparent;
+      width: 100%;
+    }
 
-  .hover-glow:hover { filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5)); }
-  
-  .fire-border {
-    position: relative;
-  }
-  .fire-border::after {
-    content: ''; position: absolute; inset: 0; padding: 2px; border-radius: inherit;
-    background: linear-gradient(to bottom, #f00, #ff0);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-    opacity: 0.5;
-    animation: pulse 1.5s infinite;
-  }
-</style>
-<link rel="stylesheet" href="/index.css">
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: currentColor;
+      cursor: pointer;
+      margin-top: -7px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      border: 2px solid #fff;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 4px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+    }
+
+    input[type=range]:focus {
+      outline: none;
+    }
+
+    /* Theme Backgrounds */
+    .bg-stained-glass {
+      background-color: #0f172a;
+      background-image:
+        radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+        radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+    }
+
+    .bg-parchment {
+      background-color: #f4e4bc;
+      background-image: url("https://www.transparenttextures.com/patterns/aged-paper.png");
+    }
+
+    /* --- REAL FIRE BUTTON EFFECT --- */
+    .btn-fire-container {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-fire-container::before {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 10px;
+      right: 10px;
+      height: 40px;
+      background: rgba(255, 69, 0, 0.6);
+      filter: blur(20px);
+      z-index: -1;
+      animation: firePulse 0.5s infinite alternate;
+    }
+
+    .fire-core {
+      background: radial-gradient(circle at 30% 30%, #ffd700, #ff4500, #8b0000);
+      box-shadow:
+        0 0 10px #ff4500,
+        0 0 20px #ff0000,
+        inset 0 0 15px rgba(255, 255, 0, 0.5);
+    }
+
+    /* Hi-Tech Radar Effect */
+    .radar-ring {
+      border: 2px solid transparent;
+      border-top: 2px solid #00ff00;
+      border-right: 2px solid #00ff00;
+      border-radius: 50%;
+      animation: radar 1.5s linear infinite;
+    }
+
+    .hover-glow:hover {
+      filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+    }
+
+    .fire-border {
+      position: relative;
+    }
+
+    .fire-border::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      padding: 2px;
+      border-radius: inherit;
+      background: linear-gradient(to bottom, #f00, #ff0);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.5;
+      animation: pulse 1.5s infinite;
+    }
+  </style>
+  <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="antialiased selection:bg-yellow-200 selection:text-black">
-    <div id="root"></div>
+
+<body class="antialiased selection:bg-yellow-200 selection:text-black">
+  <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>
