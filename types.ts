@@ -1,3 +1,4 @@
+
 export interface VerseReference {
   book: string;
   chapter: number;
@@ -11,13 +12,18 @@ export interface ContextData {
 }
 
 export interface HermeneuticsData {
-  author: string;
-  audience: string;
-  purpose: string;
-  meaning: string;
+  speaker: string;     // Quem está falando?
+  receiver: string;    // Para quem?
+  immediateContext: string; // Contexto dos versos antes e depois
+  generalContext: string;   // Contexto do livro/capítulo
+  application: string; // Como aplicar hoje
 }
 
-export type BibleVersion = 'NVI' | 'ARC' | 'NBV' | 'BAM' | 'TNM' | 'NTLH';
+// Adicionado ACF como solicitado
+export type BibleVersion = 'NVI' | 'ACF' | 'ARC' | 'NBV' | 'BAM' | 'TNM' | 'NTLH';
+
+// Adicionado tema medieval
+export type AppTheme = 'hitech' | 'jesus' | 'kids' | 'catholic' | 'pentecostal' | 'medieval';
 
 export enum AppStatus {
   IDLE = 'IDLE',

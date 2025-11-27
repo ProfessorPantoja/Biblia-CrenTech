@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { ContextData, HermeneuticsData, VerseReference, BibleVersion } from "../types";
 
@@ -16,7 +17,7 @@ const verseSchema: Schema = {
   required: ["book", "chapter", "verse", "text"],
 };
 
-// Schema for Multiple Results (used for both Audio and Theme search now)
+// Schema for Multiple Results
 const multiVerseSchema: Schema = {
   type: Type.OBJECT,
   properties: {
@@ -37,47 +38,43 @@ const contextSchema: Schema = {
       type: Type.ARRAY,
       items: {
         type: Type.OBJECT,
-        properties: {
-          number: { type: Type.INTEGER },
-          text: { type: Type.STRING }
-        }
+        properties: { number: { type: Type.INTEGER }, text: { type: Type.STRING } }
       }
     },
     next: {
       type: Type.ARRAY,
       items: {
         type: Type.OBJECT,
-        properties: {
-          number: { type: Type.INTEGER },
-          text: { type: Type.STRING }
-        }
+        properties: { number: { type: Type.INTEGER }, text: { type: Type.STRING } }
       }
     }
   },
   required: ["previous", "next"]
 };
 
-// Schema for Hermeneutics
+// NEW Hermeneutics Schema (Detailed)
 const hermeneuticsSchema: Schema = {
   type: Type.OBJECT,
   properties: {
-    author: { type: Type.STRING, description: "Quem escreveu o livro" },
-    audience: { type: Type.STRING, description: "Para quem foi escrito originalmente" },
-    purpose: { type: Type.STRING, description: "O motivo ou propósito da escrita" },
-    meaning: { type: Type.STRING, description: "Explicação concisa do sentido teológico do versículo" },
+    speaker: { type: Type.STRING, description: "Quem está falando no texto? (Ex: Jesus, Paulo, Deus, um Profeta)" },
+    receiver: { type: Type.STRING, description: "Para quem está sendo falado diretamente? (Ex: Os discípulos, a multidão, os fariseus)" },
+    immediateContext: { type: Type.STRING, description: "O que acontece imediatamente antes e depois? Explique a cena." },
+    generalContext: { type: Type.STRING, description: "Contexto geral do capítulo/livro e propósito teológico." },
+    application: { type: Type.STRING, description: "Como aplicar este ensino específico na vida moderna hoje?" },
   },
-  required: ["author", "audience", "purpose", "meaning"]
+  required: ["speaker", "receiver", "immediateContext", "generalContext", "application"]
 };
 
 const getVersionFullName = (version: BibleVersion): string => {
   switch (version) {
     case 'NVI': return 'Nova Versão Internacional (NVI)';
+    case 'ACF': return 'Almeida Corrigida Fiel (ACF)';
     case 'ARC': return 'João Ferreira de Almeida Revista e Corrigida (ARC)';
     case 'NBV': return 'Nova Bíblia Viva (NBV)';
     case 'BAM': return 'Bíblia Ave Maria (Católica)';
     case 'TNM': return 'Tradução do Novo Mundo (Testemunhas de Jeová)';
     case 'NTLH': return 'Nova Tradução na Linguagem de Hoje (NTLH)';
-    default: return 'Nova Versão Internacional (NVI)';
+    default: return 'Almeida Corrigida Fiel (ACF)';
   }
 };
 
@@ -88,20 +85,13 @@ export const searchVerseByAudio = async (base64Audio: string, version: BibleVers
       model: MODEL_NAME,
       contents: {
         parts: [
+          { inlineData: { mimeType: mimeType, data: base64Audio } },
           {
-            inlineData: {
-              mimeType: mimeType,
-              data: base64Audio,
-            },
-          },
-          {
-            text: `Ouça o áudio. O usuário pode pedir um versículo específico (ex: "João 3:16") OU um tema/sentimento (ex: "estou triste", "versículo sobre dinheiro", "consolo").
-            
+            text: `Ouça o áudio. O usuário pode pedir um versículo (ex: "João 3:16") OU um tema (ex: "estou triste").
             IMPORTANTE: Use especificamente a versão: ${versionPrompt}.
-            
-            1. Se for referência exata: Retorne uma lista contendo APENAS este versículo.
-            2. Se for tema: Encontre 5 versículos variados e encorajadores na Bíblia para esse tema.
-            Retorne JSON seguindo o esquema.`,
+            1. Se referência exata: Retorne lista com APENAS este versículo.
+            2. Se tema: Encontre 5 versículos variados.
+            Retorne JSON.`,
           },
         ],
       },
@@ -113,11 +103,7 @@ export const searchVerseByAudio = async (base64Audio: string, version: BibleVers
     });
 
     const result = JSON.parse(response.text || "{}");
-    
-    if (!result.verses || !Array.isArray(result.verses) || result.verses.length === 0) {
-        throw new Error("Não foi possível identificar o versículo.");
-    }
-
+    if (!result.verses || !Array.isArray(result.verses) || result.verses.length === 0) throw new Error("Não identificado.");
     return result.verses as VerseReference[];
   } catch (error) {
     console.error("Error searching verse:", error);
@@ -128,9 +114,9 @@ export const searchVerseByAudio = async (base64Audio: string, version: BibleVers
 export const searchVerseByTheme = async (theme: string, version: BibleVersion): Promise<VerseReference[]> => {
   try {
     const versionPrompt = getVersionFullName(version);
-    const prompt = `Encontre 5 versículos bíblicos distintos que tragam sabedoria e direção sobre o tema: "${theme}".
+    const prompt = `Encontre 5 versículos bíblicos distintos sobre o tema/texto: "${theme}".
     IMPORTANTE: Use especificamente a versão: ${versionPrompt}.
-    Retorne uma lista JSON com esses 5 versículos.`;
+    Retorne JSON com 5 versículos.`;
 
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
@@ -143,25 +129,19 @@ export const searchVerseByTheme = async (theme: string, version: BibleVersion): 
     });
 
     const result = JSON.parse(response.text || "{}");
-    
-    if (!result.verses || !Array.isArray(result.verses) || result.verses.length === 0) {
-        throw new Error("Não foi possível encontrar versículos para o tema.");
-    }
-
+    if (!result.verses || !Array.isArray(result.verses) || result.verses.length === 0) throw new Error("Não encontrado.");
     return result.verses as VerseReference[];
   } catch (error) {
-    console.error("Error searching verse by theme:", error);
+    console.error("Error searching by theme:", error);
     throw error;
   }
 };
 
-export const getVerseContext = async (book: string, chapter: number, verse: number, version: BibleVersion = 'NVI'): Promise<ContextData> => {
+export const getVerseContext = async (book: string, chapter: number, verse: number, version: BibleVersion): Promise<ContextData> => {
   try {
     const versionPrompt = getVersionFullName(version);
     const prompt = `Para o versículo: ${book} ${chapter}:${verse}. 
-    Forneça uma ampla visão do contexto.
-    Retorne os 10 versículos imediatamente anteriores e os 10 versículos imediatamente posteriores (ou o máximo possível dentro do capítulo).
-    Use a versão: ${versionPrompt}.`;
+    Retorne 10 anteriores e 10 posteriores na versão ${versionPrompt}.`;
 
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
@@ -172,7 +152,6 @@ export const getVerseContext = async (book: string, chapter: number, verse: numb
         temperature: 0.1,
       }
     });
-
     return JSON.parse(response.text || "{}") as ContextData;
   } catch (error) {
     console.error("Error fetching context:", error);
@@ -182,8 +161,14 @@ export const getVerseContext = async (book: string, chapter: number, verse: numb
 
 export const getHermeneutics = async (book: string, chapter: number, verse: number, text: string): Promise<HermeneuticsData> => {
   try {
-    const prompt = `Faça uma análise hermenêutica concisa do versículo: "${text}" (${book} ${chapter}:${verse}).
-    Forneça: Autor, Público Alvo, Motivo da escrita e o Sentido Principal do trecho.`;
+    const prompt = `Faça uma análise hermenêutica PROFUNDA do versículo: "${text}" (${book} ${chapter}:${verse}).
+    Analise O TEXTO ESPECÍFICO, não apenas o livro.
+    Identifique:
+    1. Quem está falando neste verso?
+    2. Para quem está falando neste momento exato?
+    3. O que acontece imediatamente antes e depois (contexto imediato)?
+    4. Qual o contexto geral e teológico?
+    5. Aplicação prática para hoje.`;
 
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
@@ -191,10 +176,9 @@ export const getHermeneutics = async (book: string, chapter: number, verse: numb
       config: {
         responseMimeType: "application/json",
         responseSchema: hermeneuticsSchema,
-        temperature: 0.3,
+        temperature: 0.4,
       }
     });
-
     return JSON.parse(response.text || "{}") as HermeneuticsData;
   } catch (error) {
     console.error("Error fetching hermeneutics:", error);

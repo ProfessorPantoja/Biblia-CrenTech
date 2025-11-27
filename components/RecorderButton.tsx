@@ -1,13 +1,16 @@
+
 import React, { useState, useRef, useCallback } from 'react';
-import { Mic, Square } from 'lucide-react';
+import { Mic, Square, Sparkles, Zap, Flame } from 'lucide-react';
 import { blobToBase64 } from '../utils/audioUtils';
+import { AppTheme } from '../types';
 
 interface RecorderButtonProps {
   onRecordingComplete: (base64Audio: string) => void;
   isProcessing: boolean;
+  theme: AppTheme;
 }
 
-const RecorderButton: React.FC<RecorderButtonProps> = ({ onRecordingComplete, isProcessing }) => {
+const RecorderButton: React.FC<RecorderButtonProps> = ({ onRecordingComplete, isProcessing, theme }) => {
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -29,8 +32,6 @@ const RecorderButton: React.FC<RecorderButtonProps> = ({ onRecordingComplete, is
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
         const base64 = await blobToBase64(blob);
         onRecordingComplete(base64);
-        
-        // Stop all tracks to release microphone
         stream.getTracks().forEach(track => track.stop());
       };
 
@@ -38,7 +39,7 @@ const RecorderButton: React.FC<RecorderButtonProps> = ({ onRecordingComplete, is
       setIsRecording(true);
     } catch (err) {
       console.error("Error accessing microphone:", err);
-      alert("Erro ao acessar o microfone. Verifique as permissões.");
+      alert("Erro ao acessar o microfone.");
     }
   }, [onRecordingComplete]);
 
@@ -49,40 +50,76 @@ const RecorderButton: React.FC<RecorderButtonProps> = ({ onRecordingComplete, is
     }
   }, [isRecording]);
 
-  if (isProcessing) {
-    return (
-      <div className="flex flex-col items-center justify-center animate-pulse">
-        <div className="w-20 h-20 rounded-full bg-bible-gold/20 flex items-center justify-center">
-            <div className="w-16 h-16 rounded-full bg-bible-gold/50 flex items-center justify-center">
-                <Mic className="w-8 h-8 text-bible-paper animate-bounce" />
-            </div>
-        </div>
-        <p className="mt-4 text-sm text-gray-400 font-medium tracking-wide">PROCESSANDO...</p>
-      </div>
-    );
-  }
+  // --- THEME STYLING LOGIC ---
+  const getThemeStyles = () => {
+    if (isProcessing) return {
+      container: "animate-pulse",
+      button: "bg-gray-800 border-4 border-gray-600 cursor-wait",
+      icon: <Sparkles className="w-8 h-8 text-yellow-400 animate-spin" />
+    };
+
+    if (isRecording) return {
+      container: "scale-110",
+      button: "bg-red-600 border-4 border-red-400 shadow-[0_0_30px_rgba(255,0,0,0.6)] animate-pulse",
+      icon: <Square className="w-8 h-8 text-white fill-current" />
+    };
+
+    switch (theme) {
+      case 'pentecostal':
+        return {
+          container: "btn-fire-container",
+          button: "fire-core border-0 animate-fire-pulse",
+          icon: <Flame className="w-10 h-10 text-yellow-100 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+        };
+      case 'hitech':
+        return {
+          container: "relative",
+          button: "bg-black border border-cyan-500 shadow-[0_0_15px_#00ffff] hover:shadow-[0_0_30px_#00ffff] transition-all",
+          icon: <Zap className="w-8 h-8 text-cyan-400" />,
+          extra: <div className="absolute inset-0 -m-1 radar-ring pointer-events-none"></div>
+        };
+      case 'jesus':
+        return {
+          container: "",
+          button: "bg-[#f4ebd9] border border-amber-400 shadow-[0_0_20px_#d4af37] animate-glow",
+          icon: <Mic className="w-8 h-8 text-amber-800" />
+        };
+      case 'medieval':
+        return {
+          container: "",
+          button: "bg-[#8b4513] border-4 border-[#d4c5a3] shadow-lg rounded-full",
+          icon: <Mic className="w-8 h-8 text-[#d4c5a3]" />
+        };
+      case 'catholic':
+        return {
+            container: "",
+            button: "bg-slate-900 border border-slate-500 shadow-[0_0_20px_rgba(255,255,255,0.2)]",
+            icon: <Mic className="w-8 h-8 text-yellow-500" />
+        };
+      default:
+        return {
+          container: "",
+          // Use the 'animate-breathing-glow' class defined in index.html
+          button: "bg-blue-600 hover:bg-blue-500 shadow-xl animate-breathing-glow border border-blue-400",
+          icon: <Mic className="w-8 h-8 text-white" />
+        };
+    }
+  };
+
+  const styles = getThemeStyles();
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className={`flex flex-col items-center justify-center transition-all duration-500 ${styles.container}`}>
       <button
         onClick={isRecording ? stopRecording : startRecording}
-        className={`relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl ${
-          isRecording 
-            ? 'bg-red-500 shadow-red-500/50 scale-110' 
-            : 'bg-bible-accent hover:bg-blue-500 shadow-blue-500/50'
-        }`}
+        disabled={isProcessing}
+        className={`relative w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 ${styles.button}`}
       >
-        {isRecording && (
-          <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-75"></span>
-        )}
-        {isRecording ? (
-          <Square className="w-10 h-10 text-white fill-current" />
-        ) : (
-          <Mic className="w-10 h-10 text-white" />
-        )}
+        {styles.extra}
+        {styles.icon}
       </button>
-      <p className="mt-6 text-slate-400 font-light text-sm tracking-widest uppercase">
-        {isRecording ? 'Ouvindo... Toque para parar' : 'Toque para Falar'}
+      <p className={`mt-4 font-bold text-xs tracking-widest uppercase transition-colors ${theme === 'hitech' ? 'text-cyan-400' : theme === 'pentecostal' ? 'text-orange-500' : 'text-slate-400'}`}>
+        {isProcessing ? 'Processando...' : isRecording ? 'Ouvindo...' : 'Toque para Falar'}
       </p>
     </div>
   );
