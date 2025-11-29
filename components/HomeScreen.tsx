@@ -32,7 +32,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, onNavigate, userName 
                             if (navigator.share) {
                                 navigator.share({
                                     title: 'Bíblia CrenTech',
-                                    text: 'Baixe agora a Bíblia CrenTech: Tecnologia para o Reino! 📖✨',
+                                    text: 'Baixe agora a Bíblia CrenTech: IA A SERVIÇO DO REINO! 📖✨',
                                     url: 'https://biblia-crentech.vercel.app/'
                                 }).catch(console.error);
                             }

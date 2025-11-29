@@ -101,7 +101,7 @@ const App: React.FC = () => {
             <img src="/icons/android-launchericon-512-512.png" alt="Logo CrenTech" className="w-24 h-24 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('border-2'); }} />
           </div>
           <h1 className="text-4xl font-bold font-serif mb-2 tracking-wide text-center">Bíblia CrenTech</h1>
-          <p className="text-sm opacity-70 uppercase tracking-[0.2em] animate-pulse">Tecnologia para o Reino</p>
+          <p className="text-sm opacity-70 uppercase tracking-[0.2em] animate-pulse">IA A SERVIÇO DO REINO</p>
 
           {isInstallable && (
             <button
