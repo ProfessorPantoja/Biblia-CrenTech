@@ -25,10 +25,27 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, onNavigate, userName 
                     <p className={`${currentTheme.textClass} opacity-60 text-base`}>Graça e Paz,</p>
                     <h1 className={`${currentTheme.textClass} text-2xl font-bold`}>{userName}</h1>
                 </div>
-                <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 p-0.5 shadow-lg shadow-amber-500/20">
-                    {/* Placeholder Avatar - In real app could be user image */}
-                    <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-amber-400 font-bold text-lg">
-                        {userName.charAt(0)}
+
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => {
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: 'Bíblia CrenTech',
+                                    text: 'Baixe agora a Bíblia CrenTech: Tecnologia para o Reino! 📖✨',
+                                    url: 'https://biblia-crentech.vercel.app/'
+                                }).catch(console.error);
+                            }
+                        }}
+                        className="w-10 h-10 rounded-full bg-amber-400/10 border border-amber-400/50 flex items-center justify-center text-amber-400 active:scale-95 transition-transform"
+                    >
+                        <Share2 size={18} />
+                    </button>
+                    <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 p-0.5 shadow-lg shadow-amber-500/20">
+                        {/* Placeholder Avatar - In real app could be user image */}
+                        <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-amber-400 font-bold text-lg">
+                            {userName.charAt(0)}
+                        </div>
                     </div>
                 </div>
             </header>
