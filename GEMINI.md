@@ -15,6 +15,7 @@
 > 2. **PRATICIDADE**: Funcionalidades devem ser diretas (ex: atalhos, pesquisa inteligente).
 > 3. **UTILIDADE**: Cada feature deve resolver um problema real.
 > 4. **DESIGN**: Simples, Bonito e Premium.
+> 5. **ROBUSTEZ**: Código modular, escalável e limpo. "Construir uma boa casa" sem quebrar o que já existe.
 
 # Proactive Advisor Rule
 
