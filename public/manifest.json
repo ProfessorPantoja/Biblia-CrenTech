@@ -8,12 +8,12 @@
   "description": "Bíblia de consulta rápida por voz e texto com inteligência artificial.",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2665/2665038.png",
+      "src": "/icons/android/android-launchericon-192-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2665/2665038.png",
+      "src": "/icons/android/android-launchericon-512-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

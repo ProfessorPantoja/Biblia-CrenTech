@@ -1,65 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AppStatus, VerseReference, BibleVersion, AppTheme } from './types';
-import { searchVerseByAudio, searchVerseByTheme } from './services/geminiService';
-import RecorderButton from './components/RecorderButton';
-import VerseDisplay from './components/VerseDisplay';
-import Features from './components/Features';
-import { searchBibleBooks, BibleBook } from './utils/bibleData';
+import React, { useState, useEffect } from 'react';
+import { VerseReference, BibleVersion, AppTheme } from './types';
 import { SoundEngine } from './utils/soundEngine';
-import { Search } from 'lucide-react';
-import { useBible } from './hooks/useBible';
+import { usePWAInstall } from './hooks/usePWAInstall';
+import { useWakeLock } from './hooks/useWakeLock';
+import { THEMES } from './config/constants';
 
-// Configuration & Components
-import { THEMES, COMMON_THEMES } from './config/constants';
-import Header from './components/layout/Header';
-import HistorySlider from './components/layout/HistorySlider';
-import Footer from './components/layout/Footer';
-import DonationTicker from './components/layout/DonationTicker';
-import AboutModal from './components/modals/AboutModal';
-import DonateModal from './components/modals/DonateModal';
-import ThemeModal from './components/modals/ThemeModal';
+// Views
+import SearchMode from './components/SearchMode';
+import HomeScreen from './components/HomeScreen';
+import ReaderMode from './components/ReaderMode';
+
+// Types for Navigation
+type AppView = 'splash' | 'home' | 'search' | 'reader' | 'history' | 'quiz';
 
 const App: React.FC = () => {
-  // --- STATE ---
-  const [showSplash, setShowSplash] = useState(true);
-  const [status, setStatus] = useState<AppStatus>(AppStatus.IDLE);
-  const [history, setHistory] = useState<VerseReference[]>([]);
-  const [currentIndex, setCurrentIndex] = useState<number>(-1);
+  // --- GLOBAL STATE ---
+  const [currentView, setCurrentView] = useState<AppView>('splash');
 
   const [bibleVersion, setBibleVersion] = useState<BibleVersion>('ACF');
   const [appTheme, setAppTheme] = useState<AppTheme>('hitech');
+  const [history, setHistory] = useState<VerseReference[]>([]);
+  const [currentIndex, setCurrentIndex] = useState<number>(-1);
+  const [isMuted, setIsMuted] = useState(true);
 
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
-  const [isDonateOpen, setIsDonateOpen] = useState(false);
-  const [isThemeOpen, setIsThemeOpen] = useState(false);
-  const [showTicker, setShowTicker] = useState(false);
-  const [isMuted, setIsMuted] = useState(true); // Default muted to respect browser autoplay
-
-  // Search & Autocomplete
-  const [textSearch, setTextSearch] = useState('');
-  const [showTextSearchInput, setShowTextSearchInput] = useState(false);
-  const [copiedAll, setCopiedAll] = useState(false);
-  const [suggestions, setSuggestions] = useState<BibleBook[]>([]);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const { getVerses: getLocalVerses } = useBible();
+  const { isInstallable, install: installPWA } = usePWAInstall();
+  useWakeLock();
 
   const currentTheme = THEMES[appTheme];
-  const currentVerse = currentIndex >= 0 ? history[currentIndex] : null;
 
-  // SPLASH SCREEN TIMER - 7 Seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-      SoundEngine.playSuccess(); // Try to play if interacted, otherwise silent
-    }, 7000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const dismissSplash = () => {
-    setShowSplash(false);
-    SoundEngine.playSuccess();
-  };
-
+  // Load Data
   useEffect(() => {
     const savedData = localStorage.getItem('bible_crentech_data');
     if (savedData) {
@@ -77,16 +46,7 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Donation Ticker Timer
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setShowTicker(true);
-      setTimeout(() => setShowTicker(false), 8000);
-    }, 45000);
-
-    return () => clearInterval(timer);
-  }, []);
-
+  // Save Data
   useEffect(() => {
     const dataToSave = {
       history: history.slice(-50),
@@ -96,227 +56,41 @@ const App: React.FC = () => {
     localStorage.setItem('bible_crentech_data', JSON.stringify(dataToSave));
   }, [history, appTheme, bibleVersion]);
 
-  // Keyboard Shortcuts
+  // Splash Timer
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing in an input
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-        if (e.key === 'Escape') {
-          (e.target as HTMLElement).blur(); // Remove focus on Esc
-          setShowTextSearchInput(false);
-        }
-        return;
-      }
+    if (currentView === 'splash') {
+      const timer = setTimeout(() => {
+        setCurrentView('home'); // Go to Home after splash
+        SoundEngine.playSuccess();
+      }, 7000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentView]);
 
-      switch (e.key.toLowerCase()) {
-        case 'p':
-          e.preventDefault();
-          setShowTextSearchInput(true);
-          // Small timeout to ensure render before focus
-          setTimeout(() => searchInputRef.current?.focus(), 50);
-          break;
-        case 's':
-          e.preventDefault();
-          setIsAboutOpen(true);
-          break;
-        case 'd':
-          e.preventDefault();
-          setIsDonateOpen(true);
-          break;
-        case 't':
-          e.preventDefault();
-          setIsThemeOpen(true);
-          break;
-        case 'escape':
-          setShowTextSearchInput(false);
-          setIsAboutOpen(false);
-          setIsDonateOpen(false);
-          setIsThemeOpen(false);
-          break;
-      }
-    };
+  const dismissSplash = () => {
+    setCurrentView('home'); // Go to Home on click
+    SoundEngine.playSuccess();
+  };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // Handle Mute/Unmute Logic
   const toggleMute = () => {
     const newMutedState = !isMuted;
     setIsMuted(newMutedState);
     SoundEngine.setMute(newMutedState);
     if (!newMutedState) {
-      // User interacted, we can start audio
       SoundEngine.playClick();
       SoundEngine.startAmbient();
     }
   };
 
-  useEffect(() => {
-    if (showTextSearchInput && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [showTextSearchInput]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setTextSearch(val);
-    SoundEngine.playHover(); // Subtle sound on type
-
-    if (val.length > 1) {
-      const results = searchBibleBooks(val);
-      setSuggestions(results);
-    } else {
-      setSuggestions([]);
-    }
-  };
-
-  const handleSuggestionClick = (bookName: string) => {
-    setTextSearch(bookName + " ");
-    setSuggestions([]);
+  // Navigation Handler
+  const handleNavigate = (view: AppView) => {
     SoundEngine.playClick();
-    if (searchInputRef.current) searchInputRef.current.focus();
+    setCurrentView(view);
   };
 
-  const toggleSearch = () => {
-    SoundEngine.playClick();
-    setShowTextSearchInput(prev => !prev);
-  };
+  // --- RENDER ---
 
-  const handleThemeChange = (newTheme: AppTheme) => {
-    SoundEngine.playClick();
-    setAppTheme(newTheme);
-    setIsThemeOpen(false);
-  };
-
-  const handleRecordingComplete = async (base64Audio: string) => {
-    SoundEngine.playPing();
-    setStatus(AppStatus.PROCESSING);
-    try {
-      const verses = await searchVerseByAudio(base64Audio, bibleVersion);
-      updateHistory(verses);
-      setStatus(AppStatus.SUCCESS);
-      SoundEngine.playSuccess();
-    } catch (error) {
-      console.error(error);
-      setStatus(AppStatus.ERROR);
-      SoundEngine.playError();
-      setTimeout(() => setStatus(AppStatus.IDLE), 3000);
-    }
-  };
-
-
-  const handleTextSearch = async (e: React.FormEvent | null) => {
-    if (e) e.preventDefault();
-    if (!textSearch.trim()) return;
-    setSuggestions([]);
-    setShowTextSearchInput(false);
-    SoundEngine.playClick();
-
-    setStatus(AppStatus.PROCESSING);
-
-    try {
-      // 1. Try Local Bible Search first
-      const localResult = await getLocalVerses(textSearch);
-
-      if (localResult && localResult.length > 0) {
-        // Map to VerseReference format
-        const verses: VerseReference[] = localResult.map(v => {
-          // Parse "Book Chapter:Verse" from reference string
-          // reference format from hook: "Gênesis 1:1"
-          const parts = v.reference.split(' ');
-          const lastPart = parts.pop()!; // "1:1"
-          const [chapter, verse] = lastPart.split(':').map(Number);
-          const book = parts.join(' ');
-
-          return {
-            book,
-            chapter,
-            verse,
-            text: v.text,
-            version: bibleVersion // Using current version context, though data is ACF
-          };
-        });
-
-        updateHistory(verses);
-        setStatus(AppStatus.SUCCESS);
-        SoundEngine.playSuccess();
-        setTextSearch('');
-        return;
-      }
-
-      // 2. Fallback to AI Theme Search
-      const verses = await searchVerseByTheme(textSearch, bibleVersion);
-      updateHistory(verses);
-      setStatus(AppStatus.SUCCESS);
-      SoundEngine.playSuccess();
-      setTextSearch('');
-    } catch (error) {
-      console.error(error);
-      setStatus(AppStatus.ERROR);
-      SoundEngine.playError();
-      setTimeout(() => setStatus(AppStatus.IDLE), 3000);
-    }
-  };
-
-  const handleThemeSearch = async (theme: string) => {
-    SoundEngine.playClick();
-    setStatus(AppStatus.PROCESSING);
-    try {
-      const verses = await searchVerseByTheme(theme, bibleVersion);
-      updateHistory(verses);
-      setStatus(AppStatus.SUCCESS);
-      SoundEngine.playSuccess();
-    } catch (error) {
-      console.error(error);
-      setStatus(AppStatus.ERROR);
-      SoundEngine.playError();
-      setTimeout(() => setStatus(AppStatus.IDLE), 3000);
-    }
-  };
-
-  const updateHistory = (verses: VerseReference[]) => {
-    setHistory(prev => {
-      const newHistory = [...prev, ...verses];
-      setCurrentIndex(newHistory.length - verses.length);
-      return newHistory;
-    });
-  };
-
-  const navigateHistory = (direction: 'prev' | 'next') => {
-    SoundEngine.playClick();
-    if (direction === 'prev' && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    } else if (direction === 'next' && currentIndex < history.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
-  };
-
-  const handleCopyAll = () => {
-    SoundEngine.playClick();
-    if (history.length === 0) return;
-    const allText = history.map(v => `${v.book} ${v.chapter}:${v.verse} - ${v.text}`).join('\n\n');
-    const header = `*Histórico de Pesquisa - Bíblia CrenTech (${bibleVersion})*\n\n`;
-    navigator.clipboard.writeText(header + allText);
-    setCopiedAll(true);
-    setTimeout(() => setCopiedAll(false), 2000);
-  };
-
-  const handleFeedback = () => {
-    window.location.href = "mailto:artpantoja@gmail.com?subject=Sugestão Bíblia CrenTech";
-    SoundEngine.playClick();
-  };
-
-  const handleVersionChange = (version: BibleVersion) => {
-    if (version !== 'ACF') {
-      alert("Por enquanto, apenas a versão ACF está disponível offline.");
-      SoundEngine.playError();
-      return;
-    }
-    setBibleVersion(version);
-  };
-
-  if (showSplash) {
+  if (currentView === 'splash') {
     return (
       <div
         onClick={dismissSplash}
@@ -324,169 +98,89 @@ const App: React.FC = () => {
       >
         <div className="animate-in zoom-in duration-1000 flex flex-col items-center">
           <div className={`w-32 h-32 mb-6 rounded-3xl flex items-center justify-center shadow-2xl ${currentTheme.headerClass}`}>
-            <img src="/logo.png" alt="Logo CrenTech" className="w-24 h-24 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('border-2'); }} />
+            <img src="/icons/android-launchericon-512-512.png" alt="Logo CrenTech" className="w-24 h-24 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('border-2'); }} />
           </div>
           <h1 className="text-4xl font-bold font-serif mb-2 tracking-wide text-center">Bíblia CrenTech</h1>
           <p className="text-sm opacity-70 uppercase tracking-[0.2em] animate-pulse">Tecnologia para o Reino</p>
+
+          {isInstallable && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                installPWA();
+              }}
+              className="mt-8 px-6 py-3 bg-bible-gold text-bible-dark font-bold rounded-full shadow-lg hover:scale-105 transition-transform flex items-center gap-2 animate-bounce"
+            >
+              <span className="text-xl">📲</span> Instalar App
+            </button>
+          )}
+
           <p className="text-xs opacity-50 mt-8">Toque para iniciar</p>
         </div>
       </div>
     );
   }
 
+  // Router Logic
   return (
-    <div className={`min-h-screen flex flex-col transition-all duration-700 ease-in-out ${currentTheme.bgClass}`}>
-
-      <DonateModal
-        isOpen={isDonateOpen}
-        onClose={() => setIsDonateOpen(false)}
-        currentTheme={currentTheme}
-      />
-
-      <AboutModal
-        isOpen={isAboutOpen}
-        onClose={() => setIsAboutOpen(false)}
-        currentTheme={currentTheme}
-        handleFeedback={handleFeedback}
-      />
-
-      <ThemeModal
-        isOpen={isThemeOpen}
-        onClose={() => setIsThemeOpen(false)}
-        currentTheme={currentTheme}
-        appTheme={appTheme}
-        handleThemeChange={handleThemeChange}
-      />
-
-      <Header
-        currentTheme={currentTheme}
-        bibleVersion={bibleVersion}
-        setBibleVersion={handleVersionChange}
-        toggleSearch={toggleSearch}
-        setIsDonateOpen={setIsDonateOpen}
-        setIsThemeOpen={setIsThemeOpen}
-        setIsAboutOpen={setIsAboutOpen}
-      />
-
-      <HistorySlider
-        history={history}
-        currentIndex={currentIndex}
-        setCurrentIndex={setCurrentIndex}
-        navigateHistory={navigateHistory}
-        handleCopyAll={handleCopyAll}
-        copiedAll={copiedAll}
-        currentTheme={currentTheme}
-      />
-
-      {/* SEARCH OVERLAY */}
-      {showTextSearchInput && (
-        <div className="fixed inset-0 z-40 bg-black/10 backdrop-blur-sm" onClick={() => setShowTextSearchInput(false)}></div>
+    <>
+      {currentView === 'home' && (
+        <HomeScreen
+          appTheme={appTheme}
+          onNavigate={handleNavigate}
+        />
       )}
 
-      {/* SEARCH INPUT */}
-      <div className={`w-full px-4 overflow-visible transition-all duration-300 ease-in-out absolute top-[70px] left-0 right-0 z-50 ${showTextSearchInput ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'}`}>
-        <div className="max-w-xl mx-auto relative shadow-2xl">
-          <input
-            id="search-input"
-            ref={searchInputRef}
-            type="text"
-            value={textSearch}
-            onChange={handleInputChange}
-            onKeyDown={(e) => e.key === 'Enter' && handleTextSearch(null)}
-            autoComplete="off"
-            placeholder="Busca rápida... (ex: 'Ap 1')"
-            className={`w-full pl-5 pr-12 py-4 rounded-xl border shadow-lg focus:outline-none focus:ring-4 focus:ring-opacity-50 transition-all ${currentTheme.cardClass} ${currentTheme.textClass}`}
-          />
-          {suggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2">
-              {suggestions.map((s) => (
-                <button
-                  key={s.name}
-                  onClick={() => handleSuggestionClick(s.name)}
-                  className="w-full text-left px-4 py-3 hover:bg-slate-800 text-slate-200 border-b border-slate-800/50 flex justify-between items-center group"
-                >
-                  <span className="font-bold">{s.name}</span>
-                  <span className="text-xs text-slate-500 uppercase group-hover:text-bible-gold transition-colors">{s.chapters} Caps.</span>
-                </button>
-              ))}
-            </div>
-          )}
+      {currentView === 'search' && (
+        <div className="relative">
+          {/* Back Button for Search Mode */}
           <button
-            onClick={() => handleTextSearch(null)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-bible-accent text-white"
+            onClick={() => handleNavigate('home')}
+            className="fixed top-4 left-4 z-[60] p-2 rounded-full bg-black/20 backdrop-blur-md text-white/70 hover:bg-black/40 transition-all"
           >
-            <Search size={20} />
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
           </button>
+
+          <SearchMode
+            bibleVersion={bibleVersion}
+            setBibleVersion={setBibleVersion}
+            appTheme={appTheme}
+            setAppTheme={setAppTheme}
+            currentTheme={currentTheme}
+            history={history}
+            setHistory={setHistory}
+            currentIndex={currentIndex}
+            setCurrentIndex={setCurrentIndex}
+            isMuted={isMuted}
+            toggleMute={toggleMute}
+          />
         </div>
-      </div>
+      )}
 
-      {/* MAIN CONTENT */}
-      <main className="flex-1 flex flex-col items-center p-6 relative w-full max-w-4xl mx-auto mb-32 pt-8">
-        {status === AppStatus.IDLE && history.length === 0 && (
-          <div className="w-full text-center mt-4 animate-in fade-in zoom-in duration-700 flex flex-col items-center max-w-lg mx-auto">
-            <h2 className={`text-2xl font-serif font-bold ${currentTheme.textClass} mb-6 tracking-widest uppercase`}>Temas Frequentes</h2>
-
-            {/* MAIN CATEGORIES */}
-            <div className="flex flex-wrap justify-center gap-3 mb-8">
-              <button onClick={() => handleThemeSearch("Amor")} className={`${currentTheme.cardClass} px-6 py-2 rounded-full border ${currentTheme.textClass} hover:scale-105 transition-transform`}>❤️ Amor</button>
-              <button onClick={() => handleThemeSearch("Fé")} className={`${currentTheme.cardClass} px-6 py-2 rounded-full border ${currentTheme.textClass} hover:scale-105 transition-transform`}>🙏 Fé</button>
-              <button onClick={() => handleThemeSearch("Paz")} className={`${currentTheme.cardClass} px-6 py-2 rounded-full border ${currentTheme.textClass} hover:scale-105 transition-transform`}>🕊️ Paz</button>
-            </div>
-
-            {/* CLOUD TAGS */}
-            <div className="w-full flex flex-wrap justify-center gap-2.5 px-2">
-              {COMMON_THEMES.slice(0, 30).map((theme) => (
-                <button
-                  key={theme}
-                  onClick={() => handleThemeSearch(theme)}
-                  className={`text-xs font-medium px-3 py-1.5 rounded-full border transition-all hover:-translate-y-0.5 hover:shadow-md ${currentTheme.textClass} border-current/20 hover:bg-current/10`}
-                >
-                  {theme}
-                </button>
-              ))}
-              <button onClick={() => setIsThemeOpen(true)} className="text-xs italic opacity-60 px-3 py-1.5">+ mais temas</button>
-            </div>
-          </div>
-        )}
-
-        <VerseDisplay
-          data={currentVerse}
-          textColorClass={currentTheme.textClass}
-          accentColorClass={currentTheme.accentClass}
+      {currentView === 'reader' && (
+        <ReaderMode
+          appTheme={appTheme}
+          bibleVersion={bibleVersion}
+          onNavigate={handleNavigate}
         />
+      )}
 
-        {currentVerse && status === AppStatus.SUCCESS && (
-          <Features key={currentVerse.text} reference={currentVerse} version={bibleVersion} />
-        )}
-
-        {/* RECORDER BUTTON with THEME PROP */}
-        <div className="fixed bottom-10 left-0 right-0 flex flex-col items-center justify-end z-40 pointer-events-none gap-4">
-          <div className="pointer-events-auto filter drop-shadow-2xl">
-            <RecorderButton
-              onRecordingComplete={handleRecordingComplete}
-              isProcessing={status === AppStatus.PROCESSING}
-              theme={appTheme}
-            />
+      {/* Placeholders for other views */}
+      {(currentView === 'history' || currentView === 'quiz') && (
+        <div className={`min-h-screen flex items-center justify-center ${currentTheme.bgClass} text-white`}>
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Em Construção 🚧</h2>
+            <p className="opacity-70 mb-6">Esta funcionalidade está sendo implementada.</p>
+            <button
+              onClick={() => handleNavigate('home')}
+              className="px-6 py-2 bg-amber-500 text-black font-bold rounded-full"
+            >
+              Voltar para Home
+            </button>
           </div>
         </div>
-      </main>
-
-      <DonationTicker
-        showTicker={showTicker}
-        setShowTicker={setShowTicker}
-        setIsDonateOpen={setIsDonateOpen}
-        currentTheme={currentTheme}
-      />
-
-      <Footer
-        currentTheme={currentTheme}
-        handleFeedback={handleFeedback}
-        setIsDonateOpen={setIsDonateOpen}
-        toggleMute={toggleMute}
-        isMuted={isMuted}
-      />
-
-    </div>
+      )}
+    </>
   );
 };
 

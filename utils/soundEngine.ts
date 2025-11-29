@@ -24,7 +24,7 @@ class SoundEngineClass {
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
     }
-    
+
     if (muted) {
       this.stopAmbient();
     } else {
@@ -32,9 +32,18 @@ class SoundEngineClass {
     }
   }
 
+  // --- HAPTIC FEEDBACK (VIBRAÇÃO) ---
+
+  public vibrate(pattern: number | number[]) {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(pattern);
+    }
+  }
+
   // --- EFEITOS SONOROS (SFX) ---
 
   public playClick() {
+    this.vibrate(5); // Vibração muito curta e sutil
     if (this.isMuted) return;
     this.init();
     if (!this.ctx) return;
@@ -58,6 +67,7 @@ class SoundEngineClass {
   }
 
   public playHover() {
+    // Sem vibração no hover para não irritar
     if (this.isMuted) return;
     this.init();
     if (!this.ctx) return;
@@ -68,7 +78,7 @@ class SoundEngineClass {
 
     osc.type = 'triangle';
     osc.frequency.setValueAtTime(200, t);
-    
+
     gain.gain.setValueAtTime(0.02, t);
     gain.gain.linearRampToValueAtTime(0, t + 0.05);
 
@@ -80,14 +90,15 @@ class SoundEngineClass {
   }
 
   public playSuccess() {
+    this.vibrate([50, 50, 50]); // Vibração dupla de sucesso
     if (this.isMuted) return;
     this.init();
     if (!this.ctx) return;
 
     const t = this.ctx.currentTime;
-    
+
     // Acorde Maior (Dó - Mi - Sol)
-    const notes = [523.25, 659.25, 783.99]; 
+    const notes = [523.25, 659.25, 783.99];
 
     notes.forEach((freq, i) => {
       const osc = this.ctx!.createOscillator();
@@ -95,9 +106,9 @@ class SoundEngineClass {
 
       osc.type = 'sine';
       osc.frequency.value = freq;
-      
+
       const startTime = t + (i * 0.1);
-      
+
       gain.gain.setValueAtTime(0, startTime);
       gain.gain.linearRampToValueAtTime(0.1, startTime + 0.1);
       gain.gain.exponentialRampToValueAtTime(0.001, startTime + 1.5);
@@ -111,6 +122,7 @@ class SoundEngineClass {
   }
 
   public playError() {
+    this.vibrate([100, 50, 100]); // Vibração longa de erro
     if (this.isMuted) return;
     this.init();
     if (!this.ctx) return;
@@ -134,23 +146,24 @@ class SoundEngineClass {
   }
 
   public playPing() {
-     if (this.isMuted) return;
-     this.init();
-     if (!this.ctx) return;
+    this.vibrate(10); // Ping sutil
+    if (this.isMuted) return;
+    this.init();
+    if (!this.ctx) return;
 
-     const t = this.ctx.currentTime;
-     const osc = this.ctx.createOscillator();
-     const gain = this.ctx.createGain();
+    const t = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
 
-     osc.type = 'sine';
-     osc.frequency.setValueAtTime(1200, t);
-     gain.gain.setValueAtTime(0.05, t);
-     gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1200, t);
+    gain.gain.setValueAtTime(0.05, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
 
-     osc.connect(gain);
-     gain.connect(this.ctx.destination);
-     osc.start(t);
-     osc.stop(t + 0.5);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.5);
   }
 
   // --- MÚSICA AMBIENTE (PAD CELESTIAL) ---
@@ -160,7 +173,7 @@ class SoundEngineClass {
     if (this.isMuted) return;
     this.init();
     if (!this.ctx) return;
-    
+
     // Se já estiver tocando, não duplica
     if (this.ambientOscillators.length > 0) return;
 
@@ -177,7 +190,7 @@ class SoundEngineClass {
       const osc = this.ctx!.createOscillator();
       osc.type = 'triangle';
       osc.frequency.value = freq;
-      
+
       // LFO para vibrato sutil
       const lfo = this.ctx!.createOscillator();
       lfo.type = 'sine';
@@ -206,7 +219,7 @@ class SoundEngineClass {
 
     setTimeout(() => {
       this.ambientOscillators.forEach(osc => {
-        try { osc.stop(); } catch(e){}
+        try { osc.stop(); } catch (e) { }
       });
       this.ambientOscillators = [];
       this.ambientGain = null;

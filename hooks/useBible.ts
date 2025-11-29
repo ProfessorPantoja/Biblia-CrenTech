@@ -98,6 +98,24 @@ export const useBible = () => {
             };
         }
 
+        // Pattern 4: Book-only format (e.g., "ap", "genesis") -> Default to Chapter 1
+        // Must be at least 2 chars to avoid noise
+        if (normalized.length >= 2) {
+            const book = BIBLE_BOOKS.find(b =>
+                b.name.toLowerCase() === normalized ||
+                b.abbrev.some(a => a.toLowerCase() === normalized)
+            );
+
+            if (book) {
+                return {
+                    book: book.abbrev[0],
+                    chapter: 1,
+                    verse: 1,
+                    endVerse: undefined
+                };
+            }
+        }
+
         return null;
     };
 

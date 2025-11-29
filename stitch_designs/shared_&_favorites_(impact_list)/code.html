@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shared &amp; Favorites (Impact List)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#FBBF24", // amber-300 - A vibrant gold
+            "background-light": "#F3F4F6", // gray-100
+            "background-dark": "#0D0D0D", // Almost black
+          },
+          fontFamily: {
+            display: ["Poppins", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "1rem", // 16px
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .dark .glass-card {
+      background: rgba(28, 28, 30, 0.4);-webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="mx-auto flex h-screen max-w-md flex-col p-4 pt-8">
+<header class="mb-6 flex items-center justify-between">
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-black/10 text-slate-800 dark:bg-white/10 dark:text-white">
+<span class="material-icons-outlined text-2xl">arrow_back_ios_new</span>
+</button>
+<div class="text-center">
+<h1 class="text-xl font-bold text-slate-900 dark:text-white">Shared &amp; Favorites</h1>
+<p class="text-sm text-slate-500 dark:text-slate-400">Impact List</p>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-black/10 text-slate-800 dark:bg-white/10 dark:text-white">
+<span class="material-icons-outlined text-2xl">home</span>
+</button>
+</header>
+<div class="mb-6 flex items-center justify-center space-x-2 rounded-full bg-gray-200 p-1 dark:bg-zinc-800">
+<button class="flex-1 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-zinc-900 shadow-md">All</button>
+<button class="flex-1 rounded-full px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300">Favorites</button>
+<button class="flex-1 rounded-full px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300">Shared</button>
+</div>
+<main class="flex-1 space-y-4 overflow-y-auto">
+<div class="glass-card rounded-lg p-4">
+<div class="mb-2 flex items-center justify-between">
+<h2 class="text-lg font-semibold text-primary">John 3:16</h2>
+<span class="text-xs text-slate-400 dark:text-slate-500">Shared: Oct 28, 2023</span>
+</div>
+<p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">"For God so loved the world, that he gave his only Son, that whoever believes in him should not perish but have eternal life."</p>
+</div>
+<div class="glass-card rounded-lg p-4">
+<div class="mb-2 flex items-center justify-between">
+<h2 class="text-lg font-semibold text-primary">Romans 8:28</h2>
+<span class="text-xs text-slate-400 dark:text-slate-500">Favorite: Oct 25, 2023</span>
+</div>
+<p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">"And we know that for those who love God all things work together for good, for those who are called according to his purpose."</p>
+</div>
+<div class="glass-card rounded-lg p-4">
+<div class="mb-2 flex items-center justify-between">
+<h2 class="text-lg font-semibold text-primary">Philippians 4:13</h2>
+<span class="text-xs text-slate-400 dark:text-slate-500">Shared: Oct 22, 2023</span>
+</div>
+<p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">"I can do all things through him who strengthens me."</p>
+</div>
+<div class="glass-card rounded-lg p-4">
+<div class="mb-2 flex items-center justify-between">
+<h2 class="text-lg font-semibold text-primary">Proverbs 3:5-6</h2>
+<span class="text-xs text-slate-400 dark:text-slate-500">Favorite: Oct 19, 2023</span>
+</div>
+<p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">"Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make straight your paths."</p>
+</div>
+<div class="glass-card rounded-lg p-4">
+<div class="mb-2 flex items-center justify-between">
+<h2 class="text-lg font-semibold text-primary">Jeremiah 29:11</h2>
+<span class="text-xs text-slate-400 dark:text-slate-500">Shared: Oct 15, 2023</span>
+</div>
+<p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">"For I know the plans I have for you, declares the Lord, plans for welfare and not for evil, to give you a future and a hope."</p>
+</div>
+</main>
+<footer class="mt-6 flex flex-col items-center justify-center pb-4 pt-2">
+<img alt="Pixel art of a burning bible" class="mb-2 h-16 w-16" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd6Hx8_nA7PbJxWKQs_zhr7NqCCnHsbTl8qzvG66Z01eklUVBb18qJQEDOiyGdkBuatr-nd9Vt48ko6LRUXOdHe8CG6lwlzqJK_41S9SSEuXH3eI10LtSAs07e2pWh2IN-l4Vv-uQDu0w7UldAmLgHpZGhUQnwBfyaKEcW3EBKWAvGrMMgZOX5bv73I6Ee6XUnWBBgJS8sGEJJaB0KI_PFkx6AWFAzOMgDwFTvjUv_nWqMKSeLIahF0uk8VsCwqMuXoVemeQ5AC94"/>
+<p class="text-sm font-semibold text-slate-600 dark:text-slate-400">Bíblia CrenTech</p>
+</footer>
+</div>
+
+</body></html>

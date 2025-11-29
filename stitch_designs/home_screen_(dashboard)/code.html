@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bíblia CrenTech - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 300,
+          'GRAD' 0,
+          'opsz' 24
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        .glowing-mic {
+            box-shadow: 0 0 10px 2px #FFD700, 0 0 20px 5px #FFA500, 0 0 30px 8px #FFD700 inset;
+        }
+        .glass-card {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        body {
+            min-height: max(884px, 100dvh);
+            background-color: #0F172A;}
+    </style>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#FBBF24", // amber-400
+              gold: "#FFD700",
+              "background-dark": "#0F172A", // slate-900
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+                DEFAULT: "1rem",
+                lg: '1.5rem',
+            },
+            boxShadow: {
+                'gold-glow': '0 0 15px 5px rgba(255, 215, 0, 0.3), 0 0 30px 10px rgba(255, 165, 0, 0.2)',
+            }
+          },
+        },
+      };
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-dark text-white">
+<div class="min-h-screen w-full max-w-md mx-auto flex flex-col p-6 space-y-6 relative overflow-hidden">
+<div class="absolute top-0 -left-20 w-72 h-72 bg-amber-500/10 rounded-full filter blur-3xl opacity-40"></div>
+<div class="absolute bottom-0 -right-20 w-72 h-72 bg-slate-400/10 rounded-full filter blur-3xl opacity-40"></div>
+<header class="flex justify-between items-center z-10">
+<div class="text-left">
+<p class="text-slate-400 text-base">Seja bem-vindo,</p>
+<h1 class="text-white text-2xl font-bold">Daniel</h1>
+</div>
+<div class="w-12 h-12 rounded-full border-2 border-amber-400/80 p-0.5">
+<img alt="User profile picture" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwHlLR-giCFt1ujN4IouFTtZ3mY8JS-cGCwDofLzJJDsTJJzW8Di33KZs2S9ufvzTSK2fmLn9sXsKM9LZ-uLbzO4poA5JruvPj1nEsyjePTQzhNCGzJqyF0fr-lHBM8bE5Pn7hbUpieH4URqPmlmkBwHKk2Gyp4k0qX27PFKXAtGud75ILTFddAzos1YW7eD6hJ66KGmp1s7V0ToIA2dT_B3lCltHHw30TL45tlI-pcsxjE-aLRMd2Ds_2CZOyRAsdZVJyLS9-M4E"/>
+</div>
+</header>
+<div class="relative rounded-lg p-6 flex flex-col space-y-4 glass-card shadow-lg z-10">
+<h2 class="text-sm font-semibold uppercase tracking-wider text-amber-400">VERSÍCULO DO DIA</h2>
+<blockquote class="flex-grow">
+<p class="text-xl text-slate-100 font-medium">"O Senhor é o meu pastor; de nada terei falta."</p>
+<cite class="mt-2 block text-right text-slate-400 text-sm">Salmos 23:1</cite>
+</blockquote>
+<button class="w-full bg-gold/90 hover:bg-gold text-slate-900 font-bold py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-transform active:scale-95 shadow-lg shadow-amber-500/20">
+<span class="material-symbols-outlined text-xl">share</span>
+<span>Compartilhar</span>
+</button>
+</div>
+<main class="grid grid-cols-2 gap-4 z-10">
+<div class="rounded-lg p-5 flex flex-col justify-between space-y-4 glass-card shadow-lg">
+<div class="w-16 h-16 rounded-full bg-amber-400/20 flex items-center justify-center glowing-mic border-2 border-amber-400">
+<span class="material-symbols-outlined text-4xl text-gold">mic</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-white">Busca IA</h3>
+<p class="text-sm text-slate-400">Tire suas dúvidas</p>
+</div>
+</div>
+<div class="rounded-lg p-5 flex flex-col justify-between space-y-4 glass-card shadow-lg">
+<div class="w-16 h-16 rounded-full bg-slate-700/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-gold icon-fill">auto_stories</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-white">Ler a Bíblia</h3>
+<p class="text-sm text-slate-400">Navegue</p>
+</div>
+</div>
+<div class="rounded-lg p-5 flex flex-col justify-between space-y-4 glass-card shadow-lg">
+<div class="w-16 h-16 rounded-full bg-slate-700/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-gold icon-fill">history</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-white">Meu Histórico</h3>
+<p class="text-sm text-slate-400">Salvos e compartilhados</p>
+</div>
+</div>
+<div class="rounded-lg p-5 flex flex-col justify-between space-y-4 glass-card shadow-lg">
+<div class="w-16 h-16 rounded-full bg-slate-700/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-gold icon-fill">quiz</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-white">Quiz Bíblico</h3>
+<p class="text-sm text-slate-400">Teste seus conhecimentos</p>
+</div>
+</div>
+</main>
+<footer class="mt-auto z-10">
+<div class="rounded-lg p-5 glass-card shadow-lg">
+<div class="flex justify-between items-center mb-2">
+<h4 class="font-semibold text-slate-100">Continuar lendo</h4>
+<span class="text-sm text-slate-400">Gênesis - Cap. 12</span>
+</div>
+<div class="w-full bg-slate-700 rounded-full h-2.5 mb-1">
+<div class="bg-gold h-2.5 rounded-full" style="width: 75%"></div>
+</div>
+<p class="text-right text-xs text-slate-400">75% concluído</p>
+</div>
+</footer>
+</div>
+
+</body></html>

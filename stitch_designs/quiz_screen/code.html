@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bíblia CrenTech - Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#FFD700",
+            "background-light": "#F3F4F6", // Light gray
+            "background-dark": "#0A0A0A", // Very dark, almost black
+          },
+          fontFamily: {
+            display: ["Poppins", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "1rem",
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    .glassmorphism {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
+<div class="flex-grow p-6 flex flex-col relative overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Pixelated Bible with golden flames" class="absolute -top-20 -right-20 w-80 h-80 opacity-20 dark:opacity-30 object-contain blur-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxEE88fgWKor7M597lKUwmx98zV4tzI7SD78QVgOO0HuF2l_ZD5MC4YO2umtU7KuMfuB0aQ5dp0gg4sK3kQ6u773I6hn2N5oehiXaPGjLOhFOHJHxWnLI_7Gi_fd9PTwyzsgqKC3PmOh8jBAic8FCvMNq_GyIrjAou6QrLa2vzhCTdtr1LqeN1V-Oph736rqmu5OGnFPPfRnHVh6Y4k4OC9ClKT1VsNvoi-142UkwbS6oNteogJtIZkyJG1cyqdMoG2aeEjgfcw4"/>
+</div>
+<div class="flex flex-col flex-grow z-10">
+<header class="flex justify-between items-center mb-6">
+<button class="glassmorphism p-2 rounded-full text-white">
+<span class="material-icons-outlined">arrow_back_ios_new</span>
+</button>
+<div class="flex items-center gap-2 text-primary font-bold text-lg glassmorphism py-2 px-4 rounded-full">
+<span class="material-icons-outlined">star</span>
+<span>350</span>
+</div>
+<button class="glassmorphism p-2 rounded-full text-white">
+<span class="material-icons-outlined">home</span>
+</button>
+</header>
+<main class="flex-grow flex flex-col justify-center items-center text-center">
+<div class="w-full max-w-md glassmorphism p-6 rounded-2xl shadow-lg">
+<p class="text-sm font-medium text-gray-300 dark:text-gray-400 mb-2">Gênesis 1:1</p>
+<h1 class="text-xl font-semibold text-white mb-8">O que Deus criou no primeiro dia?</h1>
+<div class="space-y-4">
+<button class="w-full text-left p-4 rounded-lg font-medium transition-colors duration-200 bg-white/10 hover:bg-white/20 text-white border border-white/20">
+              A) A luz e as trevas
+            </button>
+<button class="w-full text-left p-4 rounded-lg font-medium transition-colors duration-200 bg-white/10 hover:bg-white/20 text-white border border-white/20">
+              B) O céu e a terra
+            </button>
+<button class="w-full text-left p-4 rounded-lg font-medium transition-colors duration-200 bg-white/10 hover:bg-white/20 text-white border border-white/20">
+              C) Os animais e as plantas
+            </button>
+<button class="w-full text-left p-4 rounded-lg font-medium transition-colors duration-200 bg-primary hover:opacity-90 text-black border border-primary/50">
+              D) O homem e a mulher
+            </button>
+</div>
+</div>
+</main>
+<footer class="mt-8">
+<button class="w-full bg-primary text-black font-bold py-4 rounded-lg shadow-lg shadow-primary/20 transition-transform active:scale-95">
+          Verificar Resposta
+        </button>
+</footer>
+</div>
+</div>
+
+</body></html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reader Mode (Bible Text)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#FBBF24", // amber-400
+            "background-light": "#F3F4F6", // gray-100
+            "background-dark": "#111827", // gray-900
+          },
+          fontFamily: {
+            display: ["Poppins", "sans-serif"],
+            serif: ["Merriweather", "serif"],
+          },
+          borderRadius: {
+            DEFAULT: "1rem",
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+    .glass {
+        background: rgba(31, 41, 55, 0.6);-webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .dark .glass {
+        background: rgba(31, 41, 55, 0.6);}
+    .light .glass {
+        background: rgba(255, 255, 255, 0.6);border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display dark">
+<div class="mx-auto max-w-sm h-screen flex flex-col relative overflow-hidden bg-background-light dark:bg-background-dark">
+<header class="sticky top-0 z-20 p-4 pt-10 glass">
+<div class="flex justify-between items-center text-gray-800 dark:text-gray-100">
+<button class="p-2 rounded-full hover:bg-white/10 dark:hover:bg-black/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<div class="flex flex-col items-center">
+<h1 class="font-bold text-lg text-gray-900 dark:text-white">Gênesis 1</h1>
+<span class="text-sm text-gray-600 dark:text-gray-400">Bíblia CrenTech</span>
+</div>
+<button class="p-2 rounded-full hover:bg-white/10 dark:hover:bg-black/10 transition-colors">
+<span class="material-symbols-outlined">text_fields</span>
+</button>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto px-6 py-6 text-gray-800 dark:text-gray-200">
+<div class="font-serif text-base leading-loose space-y-4">
+<p><sup class="font-bold text-primary mr-1">1</sup>No princípio, criou Deus os céus e a terra.</p>
+<p><sup class="font-bold text-primary mr-1">2</sup>A terra, porém, estava sem forma e vazia; havia trevas sobre a face do abismo, e o Espírito de Deus pairava por sobre as águas.</p>
+<p><sup class="font-bold text-primary mr-1">3</sup>Disse Deus: Haja luz; e houve luz.</p>
+<p><sup class="font-bold text-primary mr-1">4</sup>E viu Deus que a luz era boa; e fez separação entre a luz e as trevas.</p>
+<p><sup class="font-bold text-primary mr-1">5</sup>Chamou Deus à luz Dia e às trevas, Noite. Houve tarde e manhã, o primeiro dia.</p>
+<p><sup class="font-bold text-primary mr-1">6</sup>E disse Deus: Haja firmamento no meio das águas e separação entre águas e águas.</p>
+<p><sup class="font-bold text-primary mr-1">7</sup>Fez, pois, Deus o firmamento e separação entre as águas debaixo do firmamento e as águas sobre o firmamento. E assim se fez.</p>
+<p><sup class="font-bold text-primary mr-1">8</sup>E chamou Deus ao firmamento Céus. Houve tarde e manhã, o segundo dia.</p>
+<p><sup class="font-bold text-primary mr-1">9</sup>Disse também Deus: Ajuntem-se as águas debaixo dos céus num só lugar, e apareça a porção seca. E assim se fez.</p>
+<p><sup class="font-bold text-primary mr-1">10</sup>À porção seca chamou Deus Terra e ao ajuntamento das águas, Mares. E viu Deus que isso era bom.</p>
+</div>
+</main>
+<button class="absolute bottom-24 right-6 bg-primary text-gray-900 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transform hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl">share</span>
+</button>
+<nav class="sticky bottom-0 z-20 p-4 pb-10 glass">
+<div class="flex justify-around items-center text-gray-600 dark:text-gray-400">
+<button class="flex flex-col items-center space-y-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="text-xs">Bíblia</span>
+</button>
+<button class="flex flex-col items-center space-y-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">home</span>
+<span class="text-xs">Início</span>
+</button>
+<button class="flex flex-col items-center space-y-1 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="text-xs">Perfil</span>
+</button>
+</div>
+</nav>
+</div>
+
+</body></html>
