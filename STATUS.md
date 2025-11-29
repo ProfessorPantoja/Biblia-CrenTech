@@ -21,7 +21,7 @@
     *   PWA Manifest (básico).
 
 ## 🚀 Próximos Passos (Backlog)
-
+    ISSO AQUI SAO IDEIAS QUE SO NO FUTURO FAREI.. e talvez nem faça (PANTOJA)
 1.  **Monetização Avançada:**
     *   Integração Stripe para assinaturas.
     *   Pixel do Facebook.
