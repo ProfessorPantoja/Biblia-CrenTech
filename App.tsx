@@ -7,6 +7,7 @@ import Features from './components/Features';
 import { searchBibleBooks, BibleBook } from './utils/bibleData';
 import { SoundEngine } from './utils/soundEngine';
 import { Search } from 'lucide-react';
+import { useBible } from './hooks/useBible';
 
 // Configuration & Components
 import { THEMES, COMMON_THEMES } from './config/constants';
@@ -40,6 +41,7 @@ const App: React.FC = () => {
   const [copiedAll, setCopiedAll] = useState(false);
   const [suggestions, setSuggestions] = useState<BibleBook[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const { getVerses: getLocalVerses } = useBible();
 
   const currentTheme = THEMES[appTheme];
   const currentVerse = currentIndex >= 0 ? history[currentIndex] : null;
@@ -93,6 +95,50 @@ const App: React.FC = () => {
     };
     localStorage.setItem('bible_crentech_data', JSON.stringify(dataToSave));
   }, [history, appTheme, bibleVersion]);
+
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        if (e.key === 'Escape') {
+          (e.target as HTMLElement).blur(); // Remove focus on Esc
+          setShowTextSearchInput(false);
+        }
+        return;
+      }
+
+      switch (e.key.toLowerCase()) {
+        case 'p':
+          e.preventDefault();
+          setShowTextSearchInput(true);
+          // Small timeout to ensure render before focus
+          setTimeout(() => searchInputRef.current?.focus(), 50);
+          break;
+        case 's':
+          e.preventDefault();
+          setIsAboutOpen(true);
+          break;
+        case 'd':
+          e.preventDefault();
+          setIsDonateOpen(true);
+          break;
+        case 't':
+          e.preventDefault();
+          setIsThemeOpen(true);
+          break;
+        case 'escape':
+          setShowTextSearchInput(false);
+          setIsAboutOpen(false);
+          setIsDonateOpen(false);
+          setIsThemeOpen(false);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Handle Mute/Unmute Logic
   const toggleMute = () => {
@@ -159,6 +205,7 @@ const App: React.FC = () => {
     }
   };
 
+
   const handleTextSearch = async (e: React.FormEvent | null) => {
     if (e) e.preventDefault();
     if (!textSearch.trim()) return;
@@ -167,7 +214,38 @@ const App: React.FC = () => {
     SoundEngine.playClick();
 
     setStatus(AppStatus.PROCESSING);
+
     try {
+      // 1. Try Local Bible Search first
+      const localResult = await getLocalVerses(textSearch);
+
+      if (localResult && localResult.length > 0) {
+        // Map to VerseReference format
+        const verses: VerseReference[] = localResult.map(v => {
+          // Parse "Book Chapter:Verse" from reference string
+          // reference format from hook: "Gênesis 1:1"
+          const parts = v.reference.split(' ');
+          const lastPart = parts.pop()!; // "1:1"
+          const [chapter, verse] = lastPart.split(':').map(Number);
+          const book = parts.join(' ');
+
+          return {
+            book,
+            chapter,
+            verse,
+            text: v.text,
+            version: bibleVersion // Using current version context, though data is ACF
+          };
+        });
+
+        updateHistory(verses);
+        setStatus(AppStatus.SUCCESS);
+        SoundEngine.playSuccess();
+        setTextSearch('');
+        return;
+      }
+
+      // 2. Fallback to AI Theme Search
       const verses = await searchVerseByTheme(textSearch, bibleVersion);
       updateHistory(verses);
       setStatus(AppStatus.SUCCESS);

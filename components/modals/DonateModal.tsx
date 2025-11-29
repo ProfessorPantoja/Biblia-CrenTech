@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Heart } from 'lucide-react';
+import { X, Copy, Check, Heart, ArrowLeft } from 'lucide-react';
 import QRCode from 'react-qr-code'; // Biblioteca que gera o QR Real
 
 interface DonateModalProps {
@@ -27,6 +27,14 @@ export const DonateModal: React.FC<DonateModalProps> = ({ isOpen, onClose }) => 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="relative w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6">
+
+                {/* Botão Voltar */}
+                <button
+                    onClick={onClose}
+                    className="absolute left-4 top-4 text-slate-400 hover:text-white transition-colors"
+                >
+                    <ArrowLeft size={24} />
+                </button>
 
                 {/* Botão Fechar */}
                 <button

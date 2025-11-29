@@ -23,7 +23,7 @@ export const BIBLE_BOOKS: BibleBook[] = [
   { name: "Esdras", abbrev: ["ed", "esd"], chapters: 10 },
   { name: "Neemias", abbrev: ["ne", "neem"], chapters: 13 },
   { name: "Ester", abbrev: ["et", "est"], chapters: 10 },
-  { name: "Jó", abbrev: ["job", "job"], chapters: 42 },
+  { name: "Jó", abbrev: ["jó", "job"], chapters: 42 },
   { name: "Salmos", abbrev: ["sl", "sal", "salmo"], chapters: 150 },
   { name: "Provérbios", abbrev: ["pv", "prov"], chapters: 31 },
   { name: "Eclesiastes", abbrev: ["ec", "ecl"], chapters: 12 },
@@ -78,8 +78,8 @@ export const searchBibleBooks = (query: string): BibleBook[] => {
   const cleanQuery = query.toLowerCase().trim();
   if (cleanQuery.length < 2) return [];
 
-  return BIBLE_BOOKS.filter(b => 
-    b.name.toLowerCase().includes(cleanQuery) || 
+  return BIBLE_BOOKS.filter(b =>
+    b.name.toLowerCase().includes(cleanQuery) ||
     b.abbrev.some(a => a.startsWith(cleanQuery))
   ).slice(0, 5); // Retorna top 5 sugestões
 };
