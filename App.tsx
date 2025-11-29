@@ -307,6 +307,15 @@ const App: React.FC = () => {
     SoundEngine.playClick();
   };
 
+  const handleVersionChange = (version: BibleVersion) => {
+    if (version !== 'ACF') {
+      alert("Por enquanto, apenas a versão ACF está disponível offline.");
+      SoundEngine.playError();
+      return;
+    }
+    setBibleVersion(version);
+  };
+
   if (showSplash) {
     return (
       <div
@@ -352,7 +361,7 @@ const App: React.FC = () => {
       <Header
         currentTheme={currentTheme}
         bibleVersion={bibleVersion}
-        setBibleVersion={setBibleVersion}
+        setBibleVersion={handleVersionChange}
         toggleSearch={toggleSearch}
         setIsDonateOpen={setIsDonateOpen}
         setIsThemeOpen={setIsThemeOpen}

@@ -105,6 +105,12 @@
 - **T**: Abrir "Temas" (Sugestão adicionada)
 - **ESC**: Fecha qualquer modal ou pesquisa
 
+### 🔒 8. Controle de Versão (Limitação Offline)
+
+**Arquivo Modificado**: [`App.tsx`](file:///d:/01_PROJETOS_ATIVOS/Biblia CrenTech/bíblia-crentech-legado/App.tsx)
+- **Restrição**: Apenas a versão **ACF** está disponível no momento.
+- **Feedback**: Ao tentar mudar para NVI, ARC, etc., o sistema exibe um alerta explicativo e reverte para ACF.
+
 ---
 
 ## 📊 Resumo Técnico
