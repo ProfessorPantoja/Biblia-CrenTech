@@ -2,17 +2,16 @@ import React from 'react';
 import { AppTheme } from '../types';
 import { THEMES } from '../config/constants';
 import { Mic, BookOpen, History, Gamepad2, Share2, ChevronRight, Download, Palette } from 'lucide-react';
+import { useApp } from '../contexts/AppContext';
+import { useNavigation } from '../contexts/NavigationContext';
+import { usePWAInstall } from '../hooks/usePWAInstall';
 
-interface HomeScreenProps {
-    appTheme: AppTheme;
-    setAppTheme: (theme: AppTheme) => void;
-    onNavigate: (view: 'search' | 'reader' | 'history' | 'quiz') => void;
-    userName?: string;
-    isInstallable: boolean;
-    installPWA: () => void;
-}
+const HomeScreen: React.FC = () => {
+    const { appTheme, setAppTheme } = useApp();
+    const { navigate } = useNavigation();
+    const { isInstallable, install: installPWA } = usePWAInstall();
+    const userName = "Visitante";
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, setAppTheme, onNavigate, userName = "Visitante", isInstallable, installPWA }) => {
     const currentTheme = THEMES[appTheme];
 
     const cycleTheme = () => {
@@ -112,7 +111,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, setAppTheme, onNaviga
 
                 {/* IA SEARCH CARD (Featured) */}
                 <button
-                    onClick={() => onNavigate('search')}
+                    onClick={() => navigate('search')}
                     className="col-span-1 rounded-2xl p-5 flex flex-col justify-between space-y-4 backdrop-blur-xl bg-white/5 border border-amber-400/30 shadow-xl hover:bg-white/10 transition-all group text-left"
                 >
                     <div className="w-14 h-14 rounded-full bg-amber-400/20 flex items-center justify-center border-2 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.3)] group-hover:shadow-[0_0_25px_rgba(251,191,36,0.5)] transition-shadow">
@@ -126,7 +125,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, setAppTheme, onNaviga
 
                 {/* READER CARD */}
                 <button
-                    onClick={() => onNavigate('reader')}
+                    onClick={() => navigate('reader')}
                     className="col-span-1 rounded-2xl p-5 flex flex-col justify-between space-y-4 backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all text-left"
                 >
                     <div className="w-14 h-14 rounded-full bg-slate-700/50 flex items-center justify-center">
@@ -140,7 +139,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, setAppTheme, onNaviga
 
                 {/* HISTORY CARD */}
                 <button
-                    onClick={() => onNavigate('history')}
+                    onClick={() => navigate('history')}
                     className="col-span-1 rounded-2xl p-5 flex flex-col justify-between space-y-4 backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all text-left"
                 >
                     <div className="w-14 h-14 rounded-full bg-slate-700/50 flex items-center justify-center">
@@ -154,7 +153,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, setAppTheme, onNaviga
 
                 {/* QUIZ CARD */}
                 <button
-                    onClick={() => onNavigate('quiz')}
+                    onClick={() => navigate('quiz')}
                     className="col-span-1 rounded-2xl p-5 flex flex-col justify-between space-y-4 backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all text-left"
                 >
                     <div className="w-14 h-14 rounded-full bg-slate-700/50 flex items-center justify-center">

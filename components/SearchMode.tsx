@@ -8,6 +8,7 @@ import { searchBibleBooks, BibleBook } from '../utils/bibleData';
 import { SoundEngine } from '../utils/soundEngine';
 import { Search } from 'lucide-react';
 import { useBible } from '../hooks/useBible';
+import { useApp } from '../contexts/AppContext';
 
 // Configuration & Components
 import { THEMES, COMMON_THEMES } from '../config/constants';
@@ -19,33 +20,22 @@ import AboutModal from './modals/AboutModal';
 import DonateModal from './modals/DonateModal';
 import ThemeModal from './modals/ThemeModal';
 
-interface SearchModeProps {
-    bibleVersion: BibleVersion;
-    setBibleVersion: (version: BibleVersion) => void;
-    appTheme: AppTheme;
-    setAppTheme: (theme: AppTheme) => void;
-    currentTheme: any;
-    history: VerseReference[];
-    setHistory: React.Dispatch<React.SetStateAction<VerseReference[]>>;
-    currentIndex: number;
-    setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
-    isMuted: boolean;
-    toggleMute: () => void;
-}
+const SearchMode: React.FC = () => {
+    const {
+        bibleVersion,
+        setBibleVersion,
+        appTheme,
+        setAppTheme,
+        history,
+        setHistory,
+        currentIndex,
+        setCurrentIndex,
+        isMuted,
+        toggleMute
+    } = useApp();
 
-const SearchMode: React.FC<SearchModeProps> = ({
-    bibleVersion,
-    setBibleVersion,
-    appTheme,
-    setAppTheme,
-    currentTheme,
-    history,
-    setHistory,
-    currentIndex,
-    setCurrentIndex,
-    isMuted,
-    toggleMute
-}) => {
+    const currentTheme = THEMES[appTheme];
+
     // --- STATE ---
     const [status, setStatus] = useState<AppStatus>(AppStatus.IDLE);
 

@@ -32,3 +32,5 @@ export enum AppStatus {
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
 }
+
+export type AppView = 'splash' | 'home' | 'search' | 'reader' | 'history' | 'quiz';

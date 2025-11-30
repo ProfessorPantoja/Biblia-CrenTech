@@ -4,14 +4,12 @@ import { THEMES } from '../config/constants';
 import { ChevronLeft, Type, Share2, Menu, Home, User, ChevronRight, ChevronDown } from 'lucide-react';
 import { BIBLE_BOOKS, BibleBook } from '../utils/bibleData';
 import { useBible } from '../hooks/useBible';
+import { useApp } from '../contexts/AppContext';
+import { useNavigation } from '../contexts/NavigationContext';
 
-interface ReaderModeProps {
-    appTheme: AppTheme;
-    bibleVersion: BibleVersion;
-    onNavigate: (view: 'home' | 'search') => void;
-}
-
-const ReaderMode: React.FC<ReaderModeProps> = ({ appTheme, bibleVersion, onNavigate }) => {
+const ReaderMode: React.FC = () => {
+    const { appTheme, bibleVersion } = useApp();
+    const { navigate } = useNavigation();
     const currentTheme = THEMES[appTheme];
     const { getVerses } = useBible();
 
@@ -103,7 +101,7 @@ const ReaderMode: React.FC<ReaderModeProps> = ({ appTheme, bibleVersion, onNavig
             {/* HEADER */}
             <header className={`sticky top-0 z-30 p-4 pt-6 backdrop-blur-xl bg-opacity-80 border-b border-white/5 flex justify-between items-center shadow-sm ${currentTheme.bgClass}`}>
                 <button
-                    onClick={() => onNavigate('home')}
+                    onClick={() => navigate('home')}
                     className="p-2 rounded-full hover:bg-white/10 transition-colors"
                 >
                     <ChevronLeft size={24} className={currentTheme.textClass} />

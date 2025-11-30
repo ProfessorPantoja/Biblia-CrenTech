@@ -1,61 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { VerseReference, BibleVersion, AppTheme } from './types';
 import { SoundEngine } from './utils/soundEngine';
-import { usePWAInstall } from './hooks/usePWAInstall';
 import { useWakeLock } from './hooks/useWakeLock';
 import { THEMES } from './config/constants';
+
+// Contexts
+import { AppProvider, useApp } from './contexts/AppContext';
+import { NavigationProvider, useNavigation } from './contexts/NavigationContext';
 
 // Views
 import SearchMode from './components/SearchMode';
 import HomeScreen from './components/HomeScreen';
 import ReaderMode from './components/ReaderMode';
 
-// Types for Navigation
-type AppView = 'splash' | 'home' | 'search' | 'reader' | 'history' | 'quiz';
-
-const App: React.FC = () => {
-  // --- GLOBAL STATE ---
-  const [currentView, setCurrentView] = useState<AppView>('splash');
+const AppContent: React.FC = () => {
+  const { currentView, navigate } = useNavigation();
+  const { appTheme } = useApp();
   const [splashPhase, setSplashPhase] = useState(0); // 0: Start, 1: Pulse/Text, 2: Exit
 
-  const [bibleVersion, setBibleVersion] = useState<BibleVersion>('ACF');
-  const [appTheme, setAppTheme] = useState<AppTheme>('hitech');
-  const [history, setHistory] = useState<VerseReference[]>([]);
-  const [currentIndex, setCurrentIndex] = useState<number>(-1);
-  const [isMuted, setIsMuted] = useState(true);
-
-  const { isInstallable, install: installPWA } = usePWAInstall();
   useWakeLock();
 
   const currentTheme = THEMES[appTheme];
-
-  // Load Data
-  useEffect(() => {
-    const savedData = localStorage.getItem('bible_crentech_data');
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        if (parsed.history) {
-          setHistory(parsed.history);
-          setCurrentIndex(parsed.history.length > 0 ? parsed.history.length - 1 : -1);
-        }
-        if (parsed.theme) setAppTheme(parsed.theme);
-        if (parsed.version) setBibleVersion(parsed.version);
-      } catch (e) {
-        console.error("Failed to load saved data", e);
-      }
-    }
-  }, []);
-
-  // Save Data
-  useEffect(() => {
-    const dataToSave = {
-      history: history.slice(-50),
-      theme: appTheme,
-      version: bibleVersion
-    };
-    localStorage.setItem('bible_crentech_data', JSON.stringify(dataToSave));
-  }, [history, appTheme, bibleVersion]);
 
   // Splash Animation Sequence
   useEffect(() => {
@@ -67,30 +31,14 @@ const App: React.FC = () => {
       const timer = setTimeout(() => {
         setSplashPhase(2);
         setTimeout(() => {
-          setCurrentView('home');
+          navigate('home');
           SoundEngine.playSuccess();
         }, 500); // Wait for exit animation
       }, 2500);
 
       return () => clearTimeout(timer);
     }
-  }, [currentView]);
-
-  const toggleMute = () => {
-    const newMutedState = !isMuted;
-    setIsMuted(newMutedState);
-    SoundEngine.setMute(newMutedState);
-    if (!newMutedState) {
-      SoundEngine.playClick();
-      SoundEngine.startAmbient();
-    }
-  };
-
-  // Navigation Handler
-  const handleNavigate = (view: AppView) => {
-    SoundEngine.playClick();
-    setCurrentView(view);
-  };
+  }, [currentView, navigate]);
 
   // --- RENDER ---
 
@@ -123,49 +71,23 @@ const App: React.FC = () => {
   // Router Logic
   return (
     <>
-      {currentView === 'home' && (
-        <HomeScreen
-          appTheme={appTheme}
-          setAppTheme={setAppTheme}
-          onNavigate={handleNavigate}
-          isInstallable={isInstallable}
-          installPWA={installPWA}
-        />
-      )}
+      {currentView === 'home' && <HomeScreen />}
 
       {currentView === 'search' && (
         <div className="relative">
           {/* Back Button for Search Mode */}
           <button
-            onClick={() => handleNavigate('home')}
+            onClick={() => navigate('home')}
             className="fixed top-4 left-4 z-[60] p-2 rounded-full bg-black/20 backdrop-blur-md text-white/70 hover:bg-black/40 transition-all"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
           </button>
 
-          <SearchMode
-            bibleVersion={bibleVersion}
-            setBibleVersion={setBibleVersion}
-            appTheme={appTheme}
-            setAppTheme={setAppTheme}
-            currentTheme={currentTheme}
-            history={history}
-            setHistory={setHistory}
-            currentIndex={currentIndex}
-            setCurrentIndex={setCurrentIndex}
-            isMuted={isMuted}
-            toggleMute={toggleMute}
-          />
+          <SearchMode />
         </div>
       )}
 
-      {currentView === 'reader' && (
-        <ReaderMode
-          appTheme={appTheme}
-          bibleVersion={bibleVersion}
-          onNavigate={handleNavigate}
-        />
-      )}
+      {currentView === 'reader' && <ReaderMode />}
 
       {/* Placeholders for other views */}
       {(currentView === 'history' || currentView === 'quiz') && (
@@ -174,7 +96,7 @@ const App: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4">Em Construção 🚧</h2>
             <p className="opacity-70 mb-6">Esta funcionalidade está sendo implementada.</p>
             <button
-              onClick={() => handleNavigate('home')}
+              onClick={() => navigate('home')}
               className="px-6 py-2 bg-amber-500 text-black font-bold rounded-full"
             >
               Voltar para Home
@@ -183,6 +105,16 @@ const App: React.FC = () => {
         </div>
       )}
     </>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <AppProvider>
+      <NavigationProvider>
+        <AppContent />
+      </NavigationProvider>
+    </AppProvider>
   );
 };
 
