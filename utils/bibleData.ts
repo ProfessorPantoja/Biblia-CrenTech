@@ -49,7 +49,7 @@ export const BIBLE_BOOKS: BibleBook[] = [
   { name: "Marcos", abbrev: ["mc", "mar"], chapters: 16 },
   { name: "Lucas", abbrev: ["lc", "luc"], chapters: 24 },
   { name: "João", abbrev: ["jo", "joao"], chapters: 21 },
-  { name: "Atos", abbrev: ["at", "atos"], chapters: 28 },
+  { name: "Atos", abbrev: ["atos", "at"], chapters: 28 },
   { name: "Romanos", abbrev: ["rm", "rom"], chapters: 16 },
   { name: "1 Coríntios", abbrev: ["1co", "1cor"], chapters: 16 },
   { name: "2 Coríntios", abbrev: ["2co", "2cor"], chapters: 13 },

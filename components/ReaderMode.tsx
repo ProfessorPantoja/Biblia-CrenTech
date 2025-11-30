@@ -48,7 +48,7 @@ const ReaderMode: React.FC = () => {
     // Handlers
     const handleBookSelect = (book: BibleBook) => {
         setCurrentBook(book);
-        setCurrentChapter(1); // Reset to chapter 1
+        // Don't force chapter 1 - let user select the chapter
         setShowBookSelector(false);
         setShowChapterSelector(true); // Auto-open chapter selector
     };
