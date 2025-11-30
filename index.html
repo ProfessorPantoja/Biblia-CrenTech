@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Bíblia CrenTech</title>
 
-  <!-- Favicon -->
+  <!-- Favicon & PWA Icons -->
   <link rel="icon" type="image/png" href="/icons/android-launchericon-192-192.png" />
   <link rel="apple-touch-icon" href="/icons/android-launchericon-192-192.png" />
 
@@ -17,6 +17,7 @@
   <meta property="og:description"
     content="A ferramenta mais rápida para encontrar versículos. Estudo bíblico ágil com Inteligência Artificial." />
   <meta property="og:image" content="https://biblia-crentech.vercel.app/og-image.png" />
+  <meta property="og:site_name" content="Bíblia CrenTech" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
@@ -30,12 +31,7 @@
   <meta name="keywords"
     content="Bíblia, IA, Estudo Bíblico, Teologia, Versículos, Busca por Voz, CrenTech, Inteligência Artificial, Devocional" />
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Bíblia CrenTech - Consulta Rápida com IA" />
-  <meta property="og:description"
-    content="Estude a Bíblia com inteligência artificial. Busca por voz, análise hermenêutica e versículos contextualizados." />
-  <meta property="og:site_name" content="Bíblia CrenTech" />
+
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FEBGNVTT9V"></script>
@@ -47,9 +43,8 @@
     gtag('config', 'G-FEBGNVTT9V');
   </script>
 
-  <!-- PWA / Favicon -->
+  <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
-  <link rel="icon" type="image/png" href="/logo.png">
   <meta name="theme-color" content="#450a0a">
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -142,6 +137,7 @@
     /* Range Slider */
     input[type=range] {
       -webkit-appearance: none;
+      appearance: none;
       background: transparent;
       width: 100%;
     }
@@ -236,6 +232,7 @@
       border-radius: inherit;
       background: linear-gradient(to bottom, #f00, #ff0);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       opacity: 0.5;
