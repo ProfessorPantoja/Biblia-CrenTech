@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { SoundEngine } from './utils/soundEngine';
 import { useWakeLock } from './hooks/useWakeLock';
-import { THEMES } from './config/constants';
 
 // Contexts
-import { AppProvider, useApp } from './contexts/AppContext';
+import { AppProvider } from './contexts/AppContext';
 import { NavigationProvider, useNavigation } from './contexts/NavigationContext';
 
-// Views
-import SearchMode from './components/SearchMode';
-import HomeScreen from './components/HomeScreen';
-import ReaderMode from './components/ReaderMode';
+// Components
+import SplashScreen from './components/SplashScreen';
+import AppRouter from './router/AppRouter';
 
 const AppContent: React.FC = () => {
   const { currentView, navigate } = useNavigation();
-  const { appTheme } = useApp();
   const [splashPhase, setSplashPhase] = useState(0); // 0: Start, 1: Pulse/Text, 2: Exit
 
   useWakeLock();
-
-  const currentTheme = THEMES[appTheme];
 
   // Splash Animation Sequence
   useEffect(() => {
@@ -43,69 +38,11 @@ const AppContent: React.FC = () => {
   // --- RENDER ---
 
   if (currentView === 'splash') {
-    return (
-      <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#450a0a] transition-opacity duration-500 ${splashPhase === 2 ? 'opacity-0' : 'opacity-100'}`}>
-
-        {/* Background Effects */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/20 rounded-full blur-[100px] animate-pulse"></div>
-        </div>
-
-        <div className="relative z-10 flex flex-col items-center">
-          {/* Logo Container with Pulse */}
-          <div className={`w-32 h-32 mb-6 rounded-3xl flex items-center justify-center shadow-2xl bg-gradient-to-br from-slate-900 to-black border border-amber-500/30 transition-all duration-1000 ${splashPhase >= 1 ? 'scale-110 shadow-amber-500/40' : 'scale-50 opacity-0'}`}>
-            <img src="/icons/android-launchericon-512-512.png" alt="Logo CrenTech" className="w-24 h-24 object-contain drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
-          </div>
-
-          {/* Text Reveal */}
-          <div className={`text-center transition-all duration-1000 delay-300 ${splashPhase >= 1 ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <h1 className="text-4xl font-bold font-serif mb-2 tracking-wide text-white drop-shadow-lg">Bíblia CrenTech</h1>
-            <div className="h-px w-24 mx-auto bg-gradient-to-r from-transparent via-amber-500 to-transparent mb-3"></div>
-            <p className="text-sm text-amber-400 font-medium uppercase tracking-[0.3em] animate-pulse">IA A SERVIÇO DO REINO</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <SplashScreen splashPhase={splashPhase} />;
   }
 
   // Router Logic
-  return (
-    <>
-      {currentView === 'home' && <HomeScreen />}
-
-      {currentView === 'search' && (
-        <div className="relative">
-          {/* Back Button for Search Mode */}
-          <button
-            onClick={() => navigate('home')}
-            className="fixed top-4 left-4 z-[60] p-2 rounded-full bg-black/20 backdrop-blur-md text-white/70 hover:bg-black/40 transition-all"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-          </button>
-
-          <SearchMode />
-        </div>
-      )}
-
-      {currentView === 'reader' && <ReaderMode />}
-
-      {/* Placeholders for other views */}
-      {(currentView === 'history' || currentView === 'quiz') && (
-        <div className={`min-h-screen flex items-center justify-center ${currentTheme.bgClass} text-white`}>
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Em Construção 🚧</h2>
-            <p className="opacity-70 mb-6">Esta funcionalidade está sendo implementada.</p>
-            <button
-              onClick={() => navigate('home')}
-              className="px-6 py-2 bg-amber-500 text-black font-bold rounded-full"
-            >
-              Voltar para Home
-            </button>
-          </div>
-        </div>
-      )}
-    </>
-  );
+  return <AppRouter />;
 };
 
 const App: React.FC = () => {
