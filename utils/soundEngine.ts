@@ -52,22 +52,23 @@ class SoundEngineClass {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
 
+    // Premium Click: Sine wave de alta frequência com decay rápido (som de "vidro")
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, t);
-    osc.frequency.exponentialRampToValueAtTime(400, t + 0.1);
+    osc.frequency.setValueAtTime(1500, t);
+    osc.frequency.exponentialRampToValueAtTime(100, t + 0.05);
 
-    gain.gain.setValueAtTime(0.1, t);
-    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+    gain.gain.setValueAtTime(0.05, t); // Volume baixo
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
 
     osc.connect(gain);
     gain.connect(this.ctx.destination);
 
     osc.start(t);
-    osc.stop(t + 0.1);
+    osc.stop(t + 0.05);
   }
 
   public playHover() {
-    // Sem vibração no hover para não irritar
+    // Hover Sutil: Apenas um "sopro" de ar
     if (this.isMuted) return;
     this.init();
     if (!this.ctx) return;
@@ -76,17 +77,18 @@ class SoundEngineClass {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
 
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(200, t);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, t);
 
-    gain.gain.setValueAtTime(0.02, t);
-    gain.gain.linearRampToValueAtTime(0, t + 0.05);
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.01, t + 0.02); // Fade in muito suave
+    gain.gain.linearRampToValueAtTime(0, t + 0.1); // Fade out
 
     osc.connect(gain);
     gain.connect(this.ctx.destination);
 
     osc.start(t);
-    osc.stop(t + 0.05);
+    osc.stop(t + 0.1);
   }
 
   public playSuccess() {
@@ -97,27 +99,27 @@ class SoundEngineClass {
 
     const t = this.ctx.currentTime;
 
-    // Acorde Maior (Dó - Mi - Sol)
-    const notes = [523.25, 659.25, 783.99];
+    // Acorde Maior "Celestial" (Dó - Mi - Sol - Dó oitava)
+    const notes = [523.25, 659.25, 783.99, 1046.50];
 
     notes.forEach((freq, i) => {
       const osc = this.ctx!.createOscillator();
       const gain = this.ctx!.createGain();
 
-      osc.type = 'sine';
+      osc.type = 'sine'; // Sine é mais puro e "angelical"
       osc.frequency.value = freq;
 
-      const startTime = t + (i * 0.1);
+      const startTime = t + (i * 0.05); // Arpeggio rápido
 
       gain.gain.setValueAtTime(0, startTime);
-      gain.gain.linearRampToValueAtTime(0.1, startTime + 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 1.5);
+      gain.gain.linearRampToValueAtTime(0.05, startTime + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 2.0); // Decay longo
 
       osc.connect(gain);
       gain.connect(this.ctx!.destination);
 
       osc.start(startTime);
-      osc.stop(startTime + 1.5);
+      osc.stop(startTime + 2.0);
     });
   }
 
@@ -131,11 +133,12 @@ class SoundEngineClass {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
 
-    osc.type = 'sawtooth';
+    // Erro Suave: Triângulo de baixa frequência (menos agressivo que sawtooth)
+    osc.type = 'triangle';
     osc.frequency.setValueAtTime(150, t);
     osc.frequency.linearRampToValueAtTime(100, t + 0.3);
 
-    gain.gain.setValueAtTime(0.1, t);
+    gain.gain.setValueAtTime(0.05, t);
     gain.gain.linearRampToValueAtTime(0, t + 0.3);
 
     osc.connect(gain);
@@ -179,24 +182,24 @@ class SoundEngineClass {
 
     this.ambientGain = this.ctx.createGain();
     this.ambientGain.gain.setValueAtTime(0, this.ctx.currentTime);
-    this.ambientGain.gain.linearRampToValueAtTime(0.03, this.ctx.currentTime + 2); // Fade In
+    this.ambientGain.gain.linearRampToValueAtTime(0.02, this.ctx.currentTime + 3); // Fade In lento
     this.ambientGain.connect(this.ctx.destination);
 
-    // Cria um Pad suave com 3 osciladores levemente desafinados
+    // Cria um Pad suave com Sine Waves (mais puro que Triangle)
     // Frequências baseadas em Dó e Sol (Quinta justa) para estabilidade
     const freqs = [130.81, 196.00, 261.63]; // C3, G3, C4
 
     freqs.forEach(freq => {
       const osc = this.ctx!.createOscillator();
-      osc.type = 'triangle';
+      osc.type = 'sine'; // Mudado para Sine para evitar som de "videogame"
       osc.frequency.value = freq;
 
       // LFO para vibrato sutil
       const lfo = this.ctx!.createOscillator();
       lfo.type = 'sine';
-      lfo.frequency.value = 0.2; // Bem lento
+      lfo.frequency.value = 0.1; // Muito lento
       const lfoGain = this.ctx!.createGain();
-      lfoGain.gain.value = 2; // Amplitude do vibrato
+      lfoGain.gain.value = 1; // Amplitude sutil
       lfo.connect(lfoGain);
       lfoGain.connect(osc.frequency);
       lfo.start();

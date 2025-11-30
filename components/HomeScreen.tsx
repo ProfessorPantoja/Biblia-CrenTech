@@ -1,16 +1,26 @@
 import React from 'react';
 import { AppTheme } from '../types';
 import { THEMES } from '../config/constants';
-import { Mic, BookOpen, History, Gamepad2, Share2, ChevronRight } from 'lucide-react';
+import { Mic, BookOpen, History, Gamepad2, Share2, ChevronRight, Download, Palette } from 'lucide-react';
 
 interface HomeScreenProps {
     appTheme: AppTheme;
+    setAppTheme: (theme: AppTheme) => void;
     onNavigate: (view: 'search' | 'reader' | 'history' | 'quiz') => void;
     userName?: string;
+    isInstallable: boolean;
+    installPWA: () => void;
 }
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, onNavigate, userName = "Visitante" }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, setAppTheme, onNavigate, userName = "Visitante", isInstallable, installPWA }) => {
     const currentTheme = THEMES[appTheme];
+
+    const cycleTheme = () => {
+        const themeKeys: AppTheme[] = ['hitech', 'jesus', 'medieval', 'kids', 'catholic', 'pentecostal'];
+        const currentIndex = themeKeys.indexOf(appTheme);
+        const nextIndex = (currentIndex + 1) % themeKeys.length;
+        setAppTheme(themeKeys[nextIndex]);
+    };
 
     return (
         <div className={`min-h-screen w-full flex flex-col p-6 space-y-6 relative overflow-hidden ${currentTheme.bgClass} transition-colors duration-700`}>
@@ -26,7 +36,26 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, onNavigate, userName 
                     <h1 className={`${currentTheme.textClass} text-2xl font-bold`}>{userName}</h1>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                    {/* Theme Switcher */}
+                    <button
+                        onClick={cycleTheme}
+                        className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 active:scale-95 transition-transform"
+                    >
+                        <Palette size={18} />
+                    </button>
+
+                    {/* Install PWA Button */}
+                    {isInstallable && (
+                        <button
+                            onClick={installPWA}
+                            className="w-10 h-10 rounded-full bg-green-500/10 border border-green-500/50 flex items-center justify-center text-green-400 active:scale-95 transition-transform animate-pulse"
+                        >
+                            <Download size={18} />
+                        </button>
+                    )}
+
+                    {/* Share Button */}
                     <button
                         onClick={() => {
                             if (navigator.share) {
@@ -41,7 +70,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ appTheme, onNavigate, userName 
                     >
                         <Share2 size={18} />
                     </button>
-                    <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 p-0.5 shadow-lg shadow-amber-500/20">
+
+                    <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 p-0.5 shadow-lg shadow-amber-500/20 ml-1">
                         {/* Placeholder Avatar - In real app could be user image */}
                         <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-amber-400 font-bold text-lg">
                             {userName.charAt(0)}

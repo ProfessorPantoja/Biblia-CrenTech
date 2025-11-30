@@ -16,6 +16,7 @@ type AppView = 'splash' | 'home' | 'search' | 'reader' | 'history' | 'quiz';
 const App: React.FC = () => {
   // --- GLOBAL STATE ---
   const [currentView, setCurrentView] = useState<AppView>('splash');
+  const [splashPhase, setSplashPhase] = useState(0); // 0: Start, 1: Pulse/Text, 2: Exit
 
   const [bibleVersion, setBibleVersion] = useState<BibleVersion>('ACF');
   const [appTheme, setAppTheme] = useState<AppTheme>('hitech');
@@ -56,21 +57,24 @@ const App: React.FC = () => {
     localStorage.setItem('bible_crentech_data', JSON.stringify(dataToSave));
   }, [history, appTheme, bibleVersion]);
 
-  // Splash Timer
+  // Splash Animation Sequence
   useEffect(() => {
     if (currentView === 'splash') {
+      // Phase 1: Reveal Text (0.5s)
+      setTimeout(() => setSplashPhase(1), 500);
+
+      // Phase 2: Auto Dismiss (2.5s total)
       const timer = setTimeout(() => {
-        setCurrentView('home'); // Go to Home after splash
-        SoundEngine.playSuccess();
-      }, 7000);
+        setSplashPhase(2);
+        setTimeout(() => {
+          setCurrentView('home');
+          SoundEngine.playSuccess();
+        }, 500); // Wait for exit animation
+      }, 2500);
+
       return () => clearTimeout(timer);
     }
   }, [currentView]);
-
-  const dismissSplash = () => {
-    setCurrentView('home'); // Go to Home on click
-    SoundEngine.playSuccess();
-  };
 
   const toggleMute = () => {
     const newMutedState = !isMuted;
@@ -92,30 +96,25 @@ const App: React.FC = () => {
 
   if (currentView === 'splash') {
     return (
-      <div
-        onClick={dismissSplash}
-        className={`fixed inset-0 z-[100] flex flex-col items-center justify-center ${currentTheme.bgClass} animate-out fade-out duration-1000 fill-mode-forwards cursor-pointer`}
-      >
-        <div className="animate-in zoom-in duration-1000 flex flex-col items-center">
-          <div className={`w-32 h-32 mb-6 rounded-3xl flex items-center justify-center shadow-2xl ${currentTheme.headerClass}`}>
-            <img src="/icons/android-launchericon-512-512.png" alt="Logo CrenTech" className="w-24 h-24 object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('border-2'); }} />
+      <div className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#450a0a] transition-opacity duration-500 ${splashPhase === 2 ? 'opacity-0' : 'opacity-100'}`}>
+
+        {/* Background Effects */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/20 rounded-full blur-[100px] animate-pulse"></div>
+        </div>
+
+        <div className="relative z-10 flex flex-col items-center">
+          {/* Logo Container with Pulse */}
+          <div className={`w-32 h-32 mb-6 rounded-3xl flex items-center justify-center shadow-2xl bg-gradient-to-br from-slate-900 to-black border border-amber-500/30 transition-all duration-1000 ${splashPhase >= 1 ? 'scale-110 shadow-amber-500/40' : 'scale-50 opacity-0'}`}>
+            <img src="/icons/android-launchericon-512-512.png" alt="Logo CrenTech" className="w-24 h-24 object-contain drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
           </div>
-          <h1 className="text-4xl font-bold font-serif mb-2 tracking-wide text-center">Bíblia CrenTech</h1>
-          <p className="text-sm opacity-70 uppercase tracking-[0.2em] animate-pulse">IA A SERVIÇO DO REINO</p>
 
-          {isInstallable && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                installPWA();
-              }}
-              className="mt-8 px-6 py-3 bg-bible-gold text-bible-dark font-bold rounded-full shadow-lg hover:scale-105 transition-transform flex items-center gap-2 animate-bounce"
-            >
-              <span className="text-xl">📲</span> Instalar App
-            </button>
-          )}
-
-          <p className="text-xs opacity-50 mt-8">Toque para iniciar</p>
+          {/* Text Reveal */}
+          <div className={`text-center transition-all duration-1000 delay-300 ${splashPhase >= 1 ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+            <h1 className="text-4xl font-bold font-serif mb-2 tracking-wide text-white drop-shadow-lg">Bíblia CrenTech</h1>
+            <div className="h-px w-24 mx-auto bg-gradient-to-r from-transparent via-amber-500 to-transparent mb-3"></div>
+            <p className="text-sm text-amber-400 font-medium uppercase tracking-[0.3em] animate-pulse">IA A SERVIÇO DO REINO</p>
+          </div>
         </div>
       </div>
     );
@@ -127,7 +126,10 @@ const App: React.FC = () => {
       {currentView === 'home' && (
         <HomeScreen
           appTheme={appTheme}
+          setAppTheme={setAppTheme}
           onNavigate={handleNavigate}
+          isInstallable={isInstallable}
+          installPWA={installPWA}
         />
       )}
 
