@@ -21,8 +21,57 @@ const HomeScreen: React.FC = () => {
         setAppTheme(themeKeys[nextIndex]);
     };
 
+    const [showInstallInstructions, setShowInstallInstructions] = React.useState(false);
+
+    const handleInstallClick = async () => {
+        const outcome = await installPWA();
+        if (outcome === 'instructions_needed') {
+            setShowInstallInstructions(true);
+        }
+    };
+
     return (
         <div className={`min-h-screen w-full flex flex-col p-6 space-y-6 relative overflow-hidden ${currentTheme.bgClass} transition-colors duration-700`}>
+
+            {/* INSTALL INSTRUCTIONS MODAL */}
+            {showInstallInstructions && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-6" onClick={() => setShowInstallInstructions(false)}>
+                    <div className={`relative w-full max-w-sm p-6 rounded-2xl border border-amber-500/30 shadow-2xl ${currentTheme.cardClass}`} onClick={e => e.stopPropagation()}>
+                        <button
+                            onClick={() => setShowInstallInstructions(false)}
+                            className="absolute top-4 right-4 text-white/50 hover:text-white"
+                        >
+                            ✕
+                        </button>
+                        <div className="flex flex-col items-center text-center space-y-4">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-amber-500/50 flex items-center justify-center shadow-lg mb-2">
+                                <img src="/icons/android-launchericon-192-192.png" alt="Icon" className="w-12 h-12" onError={(e) => e.currentTarget.style.display = 'none'} />
+                                <span className="text-2xl logo-fallback" style={{ display: 'none' }}>📖</span>
+                            </div>
+                            <h3 className={`text-xl font-bold ${currentTheme.textClass}`}>Instalar Aplicativo</h3>
+                            <p className={`${currentTheme.textClass} opacity-80 text-sm`}>
+                                Para instalar no seu dispositivo iOS ou Navegador:
+                            </p>
+                            <ol className={`text-left text-sm space-y-3 ${currentTheme.textClass} opacity-90 bg-black/20 p-4 rounded-xl w-full`}>
+                                <li className="flex items-center gap-3">
+                                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-black font-bold text-xs">1</span>
+                                    <span>Toque no botão <strong>Compartilhar</strong> <Share2 size={14} className="inline" /></span>
+                                </li>
+                                <li className="flex items-center gap-3">
+                                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-black font-bold text-xs">2</span>
+                                    <span>Selecione <strong>Adicionar à Tela de Início</strong> <span className="text-xs border border-current px-1 rounded">+</span></span>
+                                </li>
+                            </ol>
+                            <button
+                                onClick={() => setShowInstallInstructions(false)}
+                                className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl transition-colors"
+                            >
+                                Entendi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Background Glow Effects */}
             <div className="absolute top-0 -left-20 w-72 h-72 bg-amber-500/10 rounded-full filter blur-3xl opacity-40 pointer-events-none"></div>
@@ -47,8 +96,9 @@ const HomeScreen: React.FC = () => {
                     {/* Install PWA Button */}
                     {isInstallable && (
                         <button
-                            onClick={installPWA}
+                            onClick={handleInstallClick}
                             className="w-10 h-10 rounded-full bg-green-500/10 border border-green-500/50 flex items-center justify-center text-green-400 active:scale-95 transition-transform animate-pulse"
+                            title="Instalar App"
                         >
                             <Download size={18} />
                         </button>
@@ -79,7 +129,7 @@ const HomeScreen: React.FC = () => {
                 </div>
             </header>
 
-            {/* VERSE OF THE DAY CARD */}
+            {/* VERSICLE OF THE DAY CARD */}
             <div className={`relative rounded-2xl p-6 flex flex-col space-y-4 backdrop-blur-xl bg-white/5 border border-amber-400/20 shadow-xl z-10`}>
                 <h2 className="text-xs font-bold uppercase tracking-widest text-amber-400">Versículo do Dia</h2>
                 <blockquote className="flex-grow">

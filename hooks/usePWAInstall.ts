@@ -10,39 +10,43 @@ export const usePWAInstall = () => {
     const [isInstallable, setIsInstallable] = useState(false);
 
     useEffect(() => {
+        // Check if already in standalone mode
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+
+        // If NOT standalone, we consider it "installable" (either via prompt or manual instructions)
+        setIsInstallable(!isStandalone);
+
         const handler = (e: Event) => {
-            // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
-            // Stash the event so it can be triggered later.
             setDeferredPrompt(e as BeforeInstallPromptEvent);
-            setIsInstallable(true);
         };
 
         window.addEventListener('beforeinstallprompt', handler);
 
+        // Listen for app installed event
+        const installedHandler = () => {
+            setIsInstallable(false);
+            setDeferredPrompt(null);
+        };
+        window.addEventListener('appinstalled', installedHandler);
+
         return () => {
             window.removeEventListener('beforeinstallprompt', handler);
+            window.removeEventListener('appinstalled', installedHandler);
         };
     }, []);
 
-    const install = async () => {
-        if (!deferredPrompt) return;
-
-        // Show the install prompt
-        await deferredPrompt.prompt();
-
-        // Wait for the user to respond to the prompt
-        const { outcome } = await deferredPrompt.userChoice;
-
-        if (outcome === 'accepted') {
-            console.log('User accepted the install prompt');
-        } else {
-            console.log('User dismissed the install prompt');
+    const install = async (): Promise<'accepted' | 'dismissed' | 'instructions_needed'> => {
+        // If we have the native prompt (Android/Desktop Chrome), use it
+        if (deferredPrompt) {
+            await deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            setDeferredPrompt(null);
+            return outcome;
         }
 
-        // We've used the prompt, and can't use it again, throw it away
-        setDeferredPrompt(null);
-        setIsInstallable(false);
+        // If no prompt (iOS or some mobile browsers), signal that we need to show instructions
+        return 'instructions_needed';
     };
 
     return { isInstallable, install };
