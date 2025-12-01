@@ -25,3 +25,29 @@
 > *"PANTOJA, AQUI PODEMOS SER MAIS ÁGEIS usando [ferramenta/script/abordagem]. O que acha?"*
 >
 > Não espere o usuário pedir. Se vir um caminho melhor, **SUGIRA**.
+
+# Risk Assessment Rule (URGENT)
+
+> [!IMPORTANT]
+> **AVALIAÇÃO DE RISCO OBRIGATÓRIA:**
+> A CADA INTERAÇÃO ou pedido do usuário, ANTES de executar qualquer código, você deve avaliar o pedido e fornecer:
+> 1. **Nível de Complexidade**: (Baixo, Médio, Alto)
+> 2. **Classificação de Risco**: (Verde, Amarelo, Vermelho)
+> 3. **Probabilidade de Sucesso/Erro**: (Ex: "95% de chance de sucesso", "30% de chance de quebrar algo")
+>
+> **Exemplo de formato:**
+> > [!WARNING]
+> > **Avaliação do Pedido:**
+> > - **Complexidade:** Média
+> > - **Risco:** Amarelo
+> > - **Probabilidade:** 80% de sucesso, 20% de chance de bugs na UI.
+> > - **Motivo:** O pedido envolve alterar a lógica central de X...
+
+# Documentation Language Rule
+
+> [!IMPORTANT]
+> **IDIOMA DA DOCUMENTAÇÃO:**
+> Todos os artefatos e documentos (Walkthroughs, Plans, Tasks, etc.) devem ser escritos **SEMPRE EM PORTUGUÊS DO BRASIL**.
+>
+> - Mantenha termos técnicos em inglês (ex: "framework", "bug", "deploy") quando apropriado.
+> - O restante do texto deve ser nativo em PT-BR.

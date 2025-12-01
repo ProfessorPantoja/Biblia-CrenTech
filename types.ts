@@ -12,6 +12,7 @@ export interface ContextData {
 }
 
 export interface HermeneuticsData {
+  summary: string;
   speaker: string;     // Quem está falando?
   receiver: string;    // Para quem?
   immediateContext: string; // Contexto dos versos antes e depois

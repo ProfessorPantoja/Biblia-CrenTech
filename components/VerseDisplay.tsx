@@ -7,12 +7,14 @@ interface VerseDisplayProps {
   data: VerseReference | null;
   textColorClass?: string;
   accentColorClass?: string;
+  onReferenceClick?: () => void;
 }
 
-const VerseDisplay: React.FC<VerseDisplayProps> = ({ 
-  data, 
-  textColorClass = "text-slate-100", 
-  accentColorClass = "text-bible-gold" 
+const VerseDisplay: React.FC<VerseDisplayProps> = ({
+  data,
+  textColorClass = "text-slate-100",
+  accentColorClass = "text-bible-gold",
+  onReferenceClick
 }) => {
   const [copied, setCopied] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -33,13 +35,13 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({
         setIsSpeaking(false);
         return;
       }
-      
+
       const utterance = new SpeechSynthesisUtterance(`${data.book} capítulo ${data.chapter}, versículo ${data.verse}. ${data.text}`);
       utterance.lang = 'pt-BR';
       utterance.rate = 0.9;
-      
+
       utterance.onend = () => setIsSpeaking(false);
-      
+
       window.speechSynthesis.speak(utterance);
       setIsSpeaking(true);
     } else {
@@ -49,10 +51,14 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({
 
   return (
     <div className="w-full max-w-3xl mx-auto text-center px-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 relative group">
-      <h2 className={`text-lg md:text-xl font-bold tracking-widest uppercase mb-4 ${accentColorClass} animate-in zoom-in duration-500`}>
+      <button
+        onClick={onReferenceClick}
+        className={`text-lg md:text-xl font-bold tracking-widest uppercase mb-4 ${accentColorClass} animate-in zoom-in duration-500 hover:underline hover:scale-105 transition-all cursor-pointer`}
+        title="Clique para abrir na Bíblia"
+      >
         {data.book} {data.chapter}:{data.verse}
-      </h2>
-      
+      </button>
+
       <div className="relative py-6">
         <span className={`absolute -top-2 -left-2 text-6xl opacity-10 font-serif select-none ${accentColorClass}`}>“</span>
         <p className={`text-2xl md:text-4xl leading-relaxed font-serif ${textColorClass} drop-shadow-sm`}>
@@ -60,10 +66,10 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({
         </p>
         <span className={`absolute -bottom-6 -right-2 text-6xl opacity-10 font-serif rotate-180 select-none ${accentColorClass}`}>“</span>
       </div>
-      
+
       {/* Actions Row */}
       <div className="flex justify-center gap-4 mt-6 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-        <button 
+        <button
           onClick={handleSpeak}
           className={`p-3 rounded-full shadow-lg transition-transform hover:scale-110 active:scale-95 ${isSpeaking ? 'bg-bible-accent text-white animate-pulse' : 'bg-slate-800/80 text-slate-300 hover:bg-bible-accent hover:text-white'}`}
           title="Ouvir Versículo"
@@ -71,7 +77,7 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({
           <Volume2 size={20} />
         </button>
 
-        <button 
+        <button
           onClick={handleCopy}
           className={`p-3 rounded-full shadow-lg transition-transform hover:scale-110 active:scale-95 ${copied ? 'bg-green-600 text-white' : 'bg-slate-800/80 text-slate-300 hover:bg-green-600 hover:text-white'}`}
           title="Copiar versículo"

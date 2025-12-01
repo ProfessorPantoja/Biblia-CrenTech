@@ -22,14 +22,14 @@ const AppContent: React.FC = () => {
       // Phase 1: Reveal Text (0.5s)
       setTimeout(() => setSplashPhase(1), 500);
 
-      // Phase 2: Auto Dismiss (2.5s total)
+      // Phase 2: Auto Dismiss (IMMEDIATE)
       const timer = setTimeout(() => {
         setSplashPhase(2);
         setTimeout(() => {
           navigate('home');
           SoundEngine.playSuccess();
-        }, 500); // Wait for exit animation
-      }, 2500);
+        }, 100); // Short exit animation
+      }, 100); // Minimal delay
 
       return () => clearTimeout(timer);
     }

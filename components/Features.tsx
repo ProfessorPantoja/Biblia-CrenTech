@@ -12,10 +12,10 @@ interface FeaturesProps {
 const Features: React.FC<FeaturesProps> = ({ reference, version }) => {
   const [showContext, setShowContext] = useState(false);
   const [showHermeneutics, setShowHermeneutics] = useState(false);
-  
+
   const [contextData, setContextData] = useState<ContextData | null>(null);
   const [hermeneuticsData, setHermeneuticsData] = useState<HermeneuticsData | null>(null);
-  
+
   const [loadingContext, setLoadingContext] = useState(false);
   const [loadingHermeneutics, setLoadingHermeneutics] = useState(false);
 
@@ -24,7 +24,7 @@ const Features: React.FC<FeaturesProps> = ({ reference, version }) => {
       setShowContext(false);
       return;
     }
-    
+
     setShowContext(true);
     if (!contextData) {
       setLoadingContext(true);
@@ -65,11 +65,10 @@ const Features: React.FC<FeaturesProps> = ({ reference, version }) => {
       <div className="flex gap-4 justify-center">
         <button
           onClick={toggleContext}
-          className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-            showContext 
-              ? 'bg-bible-gold text-bible-dark shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-105' 
+          className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${showContext
+              ? 'bg-bible-gold text-bible-dark shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-105'
               : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:scale-105'
-          }`}
+            }`}
         >
           <BookOpen size={18} />
           Contexto
@@ -78,11 +77,10 @@ const Features: React.FC<FeaturesProps> = ({ reference, version }) => {
 
         <button
           onClick={toggleHermeneutics}
-          className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
-            showHermeneutics 
-              ? 'bg-purple-600 text-white shadow-[0_0_20px_rgba(147,51,234,0.4)] scale-105' 
+          className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${showHermeneutics
+              ? 'bg-purple-600 text-white shadow-[0_0_20px_rgba(147,51,234,0.4)] scale-105'
               : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:scale-105'
-          }`}
+            }`}
         >
           <School size={18} />
           Hermenêutica
@@ -98,7 +96,7 @@ const Features: React.FC<FeaturesProps> = ({ reference, version }) => {
             <h3 className="text-bible-gold font-bold uppercase text-xs tracking-widest mb-4 flex items-center gap-2">
               <BookOpen size={14} /> Contexto Imediato
             </h3>
-            
+
             {loadingContext ? (
               <div className="flex justify-center py-8 text-bible-gold">
                 <Loader2 className="animate-spin w-8 h-8" />
@@ -106,26 +104,26 @@ const Features: React.FC<FeaturesProps> = ({ reference, version }) => {
             ) : contextData ? (
               <div className="space-y-3 font-serif text-slate-300 leading-relaxed max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
                 {contextData.previous.map((v) => (
-                   <p key={v.number} className="text-sm opacity-60 hover:opacity-100 transition-opacity">
-                     <sup className="text-bible-gold mr-1 text-[10px]">{v.number}</sup>
-                     {v.text}
-                   </p>
+                  <p key={v.number} className="text-sm opacity-60 hover:opacity-100 transition-opacity">
+                    <sup className="text-bible-gold mr-1 text-[10px]">{v.number}</sup>
+                    {v.text}
+                  </p>
                 ))}
-                
+
                 <p id="current-verse" className="text-lg text-white font-medium pl-4 border-l-4 border-bible-gold py-3 bg-gradient-to-r from-bible-gold/10 to-transparent rounded-r my-2 shadow-inner">
-                   <sup className="text-bible-gold mr-1 text-xs">{reference.verse}</sup>
-                   {reference.text}
+                  <sup className="text-bible-gold mr-1 text-xs">{reference.verse}</sup>
+                  {reference.text}
                 </p>
 
                 {contextData.next.map((v) => (
-                   <p key={v.number} className="text-sm opacity-60 hover:opacity-100 transition-opacity">
-                     <sup className="text-bible-gold mr-1 text-[10px]">{v.number}</sup>
-                     {v.text}
-                   </p>
+                  <p key={v.number} className="text-sm opacity-60 hover:opacity-100 transition-opacity">
+                    <sup className="text-bible-gold mr-1 text-[10px]">{v.number}</sup>
+                    {v.text}
+                  </p>
                 ))}
               </div>
             ) : (
-                <p className="text-red-400 text-sm">Falha ao carregar contexto.</p>
+              <p className="text-red-400 text-sm">Falha ao carregar contexto.</p>
             )}
           </div>
         )}
@@ -143,52 +141,70 @@ const Features: React.FC<FeaturesProps> = ({ reference, version }) => {
               </div>
             ) : hermeneuticsData ? (
               <div className="space-y-6">
-                
-                {/* Quem fala e Para quem */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                      <div className="flex items-center gap-2 text-blue-400 mb-2">
-                        <User size={16} />
-                        <span className="text-xs font-bold uppercase">Quem fala?</span>
+
+                {/* SUMMARY (Always Visible) */}
+                <div className="bg-purple-900/20 p-4 rounded-xl border border-purple-500/20 animate-in fade-in duration-700">
+                  <p className="text-slate-200 text-base font-medium leading-relaxed">
+                    {hermeneuticsData.summary}
+                  </p>
+                </div>
+
+                {/* DETAILS (Collapsible) */}
+                <details className="group">
+                  <summary className="list-none flex justify-center cursor-pointer mt-4">
+                    <span className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-2">
+                      Ler Análise Completa <ChevronDown className="group-open:rotate-180 transition-transform" size={14} />
+                    </span>
+                  </summary>
+
+                  <div className="mt-6 space-y-6 animate-in slide-in-from-top-2 duration-500">
+                    {/* Quem fala e Para quem */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                        <div className="flex items-center gap-2 text-blue-400 mb-2">
+                          <User size={16} />
+                          <span className="text-xs font-bold uppercase">Quem fala?</span>
+                        </div>
+                        <p className="text-slate-200 text-sm">{hermeneuticsData.speaker}</p>
                       </div>
-                      <p className="text-slate-200 text-sm">{hermeneuticsData.speaker}</p>
-                  </div>
-                  <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                      <div className="flex items-center gap-2 text-green-400 mb-2">
-                        <Users size={16} />
-                        <span className="text-xs font-bold uppercase">Para quem?</span>
+                      <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                        <div className="flex items-center gap-2 text-green-400 mb-2">
+                          <Users size={16} />
+                          <span className="text-xs font-bold uppercase">Para quem?</span>
+                        </div>
+                        <p className="text-slate-200 text-sm">{hermeneuticsData.receiver}</p>
                       </div>
-                      <p className="text-slate-200 text-sm">{hermeneuticsData.receiver}</p>
+                    </div>
+
+                    {/* Contexto Imediato */}
+                    <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                      <div className="flex items-center gap-2 text-amber-400 mb-2">
+                        <MapPin size={16} />
+                        <span className="text-xs font-bold uppercase">A Cena (Antes/Depois)</span>
+                      </div>
+                      <p className="text-slate-300 text-sm leading-relaxed">{hermeneuticsData.immediateContext}</p>
+                    </div>
+
+                    {/* Aplicação Prática (Destaque) */}
+                    <div className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 p-5 rounded-xl border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
+                      <div className="flex items-center gap-2 text-purple-300 mb-3">
+                        <Zap size={18} className="animate-pulse" />
+                        <span className="text-xs font-bold uppercase tracking-wider">Aplicação para Hoje</span>
+                      </div>
+                      <p className="text-white italic font-serif text-lg leading-relaxed">"{hermeneuticsData.application}"</p>
+                    </div>
+
+                    {/* Contexto Geral (Footer) */}
+                    <div className="pt-4 border-t border-slate-800">
+                      <span className="text-[10px] text-slate-500 uppercase font-bold">Contexto Geral</span>
+                      <p className="text-slate-400 text-xs mt-1">{hermeneuticsData.generalContext}</p>
+                    </div>
                   </div>
-                </div>
-
-                {/* Contexto Imediato */}
-                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
-                    <div className="flex items-center gap-2 text-amber-400 mb-2">
-                      <MapPin size={16} />
-                      <span className="text-xs font-bold uppercase">A Cena (Antes/Depois)</span>
-                    </div>
-                    <p className="text-slate-300 text-sm leading-relaxed">{hermeneuticsData.immediateContext}</p>
-                </div>
-
-                {/* Aplicação Prática (Destaque) */}
-                <div className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 p-5 rounded-xl border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.1)]">
-                    <div className="flex items-center gap-2 text-purple-300 mb-3">
-                      <Zap size={18} className="animate-pulse" />
-                      <span className="text-xs font-bold uppercase tracking-wider">Aplicação para Hoje</span>
-                    </div>
-                    <p className="text-white italic font-serif text-lg leading-relaxed">"{hermeneuticsData.application}"</p>
-                </div>
-
-                {/* Contexto Geral (Footer) */}
-                <div className="pt-4 border-t border-slate-800">
-                  <span className="text-[10px] text-slate-500 uppercase font-bold">Contexto Geral</span>
-                  <p className="text-slate-400 text-xs mt-1">{hermeneuticsData.generalContext}</p>
-                </div>
+                </details>
 
               </div>
             ) : (
-                <p className="text-red-400 text-sm">Falha ao carregar análise.</p>
+              <p className="text-red-400 text-sm">Falha ao carregar análise.</p>
             )}
           </div>
         )}

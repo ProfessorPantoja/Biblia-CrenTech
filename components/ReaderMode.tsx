@@ -45,6 +45,21 @@ const ReaderMode: React.FC = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [currentBook, currentChapter, getVerses]);
 
+    // Check for navigation state from SearchMode
+    const { readerState, setReaderState } = useApp();
+
+    useEffect(() => {
+        if (readerState) {
+            const book = BIBLE_BOOKS.find(b => b.name === readerState.book);
+            if (book) {
+                setCurrentBook(book);
+                setCurrentChapter(readerState.chapter);
+            }
+            // Clear state after consuming
+            setReaderState(null);
+        }
+    }, [readerState, setReaderState]);
+
     // Handlers
     const handleBookSelect = (book: BibleBook) => {
         setCurrentBook(book);

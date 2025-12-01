@@ -2,8 +2,17 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { ContextData, HermeneuticsData, VerseReference, BibleVersion } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const MODEL_NAME = 'gemini-2.5-flash';
+
+// Helper to get AI instance safely
+const getAI = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    console.error("CRITICAL: GEMINI_API_KEY is missing in environment variables.");
+    throw new Error("API Key missing. Check .env file.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 // Schema for a single verse
 const verseSchema: Schema = {
@@ -56,13 +65,14 @@ const contextSchema: Schema = {
 const hermeneuticsSchema: Schema = {
   type: Type.OBJECT,
   properties: {
+    summary: { type: Type.STRING, description: "Um resumo curto e impactante de 1 parágrafo sobre o versículo." },
     speaker: { type: Type.STRING, description: "Quem está falando no texto? (Ex: Jesus, Paulo, Deus, um Profeta)" },
     receiver: { type: Type.STRING, description: "Para quem está sendo falado diretamente? (Ex: Os discípulos, a multidão, os fariseus)" },
     immediateContext: { type: Type.STRING, description: "O que acontece imediatamente antes e depois? Explique a cena." },
     generalContext: { type: Type.STRING, description: "Contexto geral do capítulo/livro e propósito teológico." },
     application: { type: Type.STRING, description: "Como aplicar este ensino específico na vida moderna hoje?" },
   },
-  required: ["speaker", "receiver", "immediateContext", "generalContext", "application"]
+  required: ["summary", "speaker", "receiver", "immediateContext", "generalContext", "application"]
 };
 
 const getVersionFullName = (version: BibleVersion): string => {
@@ -80,6 +90,7 @@ const getVersionFullName = (version: BibleVersion): string => {
 
 export const searchVerseByAudio = async (base64Audio: string, version: BibleVersion, mimeType: string = 'audio/webm'): Promise<VerseReference[]> => {
   try {
+    const ai = getAI();
     const versionPrompt = getVersionFullName(version);
     const response = await ai.models.generateContent({
       model: MODEL_NAME,
@@ -98,7 +109,7 @@ export const searchVerseByAudio = async (base64Audio: string, version: BibleVers
       config: {
         responseMimeType: "application/json",
         responseSchema: multiVerseSchema,
-        temperature: 0.2, 
+        temperature: 0.2,
       },
     });
 
@@ -113,6 +124,7 @@ export const searchVerseByAudio = async (base64Audio: string, version: BibleVers
 
 export const searchVerseByTheme = async (theme: string, version: BibleVersion): Promise<VerseReference[]> => {
   try {
+    const ai = getAI();
     const versionPrompt = getVersionFullName(version);
     const prompt = `Encontre 5 versículos bíblicos distintos sobre o tema/texto: "${theme}".
     IMPORTANTE: Use especificamente a versão: ${versionPrompt}.
@@ -124,7 +136,7 @@ export const searchVerseByTheme = async (theme: string, version: BibleVersion): 
       config: {
         responseMimeType: "application/json",
         responseSchema: multiVerseSchema,
-        temperature: 0.5, 
+        temperature: 0.5,
       },
     });
 
@@ -139,6 +151,7 @@ export const searchVerseByTheme = async (theme: string, version: BibleVersion): 
 
 export const getVerseContext = async (book: string, chapter: number, verse: number, version: BibleVersion): Promise<ContextData> => {
   try {
+    const ai = getAI();
     const versionPrompt = getVersionFullName(version);
     const prompt = `Para o versículo: ${book} ${chapter}:${verse}. 
     Retorne 10 anteriores e 10 posteriores na versão ${versionPrompt}.`;
@@ -161,14 +174,15 @@ export const getVerseContext = async (book: string, chapter: number, verse: numb
 
 export const getHermeneutics = async (book: string, chapter: number, verse: number, text: string): Promise<HermeneuticsData> => {
   try {
+    const ai = getAI();
     const prompt = `Faça uma análise hermenêutica PROFUNDA do versículo: "${text}" (${book} ${chapter}:${verse}).
     Analise O TEXTO ESPECÍFICO, não apenas o livro.
-    Identifique:
-    1. Quem está falando neste verso?
-    2. Para quem está falando neste momento exato?
-    3. O que acontece imediatamente antes e depois (contexto imediato)?
-    4. Qual o contexto geral e teológico?
-    5. Aplicação prática para hoje.`;
+    
+    IMPORTANTE:
+    1. Gere um 'summary' curto e direto (máx 2 frases) que capture a essência.
+    2. Identifique quem fala e para quem.
+    3. Analise o contexto imediato (cena) e geral (teologia).
+    4. Dê uma aplicação prática poderosa.`;
 
     const response = await ai.models.generateContent({
       model: MODEL_NAME,

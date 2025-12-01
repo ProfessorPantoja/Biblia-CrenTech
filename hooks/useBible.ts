@@ -30,9 +30,11 @@ export const useBible = () => {
 
             if (book) {
                 const number = parseInt(numberStr);
-                // If single digit, treat as chapter 1, verse N
-                // If double+ digit, treat as chapter N, verse 1
-                if (numberStr.length === 1) {
+
+                // For books with only 1 chapter (e.g., Judas, Obadias, Filemom),
+                // single digit numbers are verses in chapter 1
+                // For all other books, numbers are chapters
+                if (book.chapters === 1 && numberStr.length === 1) {
                     return {
                         book: book.abbrev[0],
                         chapter: 1,
@@ -40,6 +42,8 @@ export const useBible = () => {
                         endVerse: undefined
                     };
                 } else {
+                    // Default: treat number as chapter, verse 1
+                    // AT2 → Atos 2:1, AP11 → Apocalipse 11:1, etc.
                     return {
                         book: book.abbrev[0],
                         chapter: number,

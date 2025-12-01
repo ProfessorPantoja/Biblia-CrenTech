@@ -9,6 +9,7 @@ import { SoundEngine } from '../utils/soundEngine';
 import { Search } from 'lucide-react';
 import { useBible } from '../hooks/useBible';
 import { useApp } from '../contexts/AppContext';
+import { useNavigation } from '../contexts/NavigationContext';
 
 // Configuration & Components
 import { THEMES, COMMON_THEMES } from '../config/constants';
@@ -31,8 +32,11 @@ const SearchMode: React.FC = () => {
         currentIndex,
         setCurrentIndex,
         isMuted,
-        toggleMute
+        toggleMute,
+        setReaderState
     } = useApp();
+
+    const { navigate } = useNavigation();
 
     const currentTheme = THEMES[appTheme];
 
@@ -382,6 +386,15 @@ const SearchMode: React.FC = () => {
                     data={currentVerse}
                     textColorClass={currentTheme.textClass}
                     accentColorClass={currentTheme.accentClass}
+                    onReferenceClick={() => {
+                        if (currentVerse) {
+                            setReaderState({
+                                book: currentVerse.book,
+                                chapter: currentVerse.chapter
+                            });
+                            navigate('reader');
+                        }
+                    }}
                 />
 
                 {currentVerse && status === AppStatus.SUCCESS && (
