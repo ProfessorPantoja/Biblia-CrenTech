@@ -7,6 +7,12 @@
 >
 > If you need to manipulate these files, use scripts (Node.js/Python) or shell commands. NEVER use `view_file` on them.
 
+# Histórico do Assistente
+
+> [!NOTE]
+> A partir deste commit (2026-02-04), o assistente principal usado no projeto passa a ser o **Codex da OpenAI**.
+> Antes, o assistente utilizado era o **GEMINI 3.0**.
+
 # Core Principles (The "CrenTech Way")
 
 > [!TIP]
