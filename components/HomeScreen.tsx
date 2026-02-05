@@ -23,6 +23,7 @@ const HomeScreen: React.FC = () => {
     const currentTheme = THEMES[appTheme];
 
     const [dailyVerse, setDailyVerse] = React.useState(FALLBACK_DAILY_VERSE);
+    const [isDailyVerseLoading, setIsDailyVerseLoading] = React.useState(true);
 
     const cycleTheme = () => {
         const themeKeys: AppTheme[] = ['hitech', 'jesus', 'medieval', 'kids', 'catholic', 'pentecostal'];
@@ -61,6 +62,8 @@ const HomeScreen: React.FC = () => {
                     reference
                 });
             }
+
+            setIsDailyVerseLoading(false);
         };
 
         loadDailyVerse();
@@ -181,22 +184,23 @@ const HomeScreen: React.FC = () => {
                 <h2 className="text-xs font-bold uppercase tracking-widest text-amber-400">Versículo do Dia</h2>
                 <blockquote className="flex-grow">
                     <p className={`text-xl ${currentTheme.textClass} font-medium leading-relaxed`}>
-                        {"\"" + dailyVerse.text + "\""}
+                        {isDailyVerseLoading ? 'Carregando versículo do dia...' : `"${dailyVerse.text}"`}
                     </p>
                     <cite className={`mt-3 block text-right ${currentTheme.textClass} opacity-60 text-sm font-serif italic`}>
-                        {dailyVerse.reference}
+                        {isDailyVerseLoading ? 'Carregando...' : dailyVerse.reference}
                     </cite>
                 </blockquote>
                 <button
                     onClick={() => {
                         if (navigator.share) {
+                            if (isDailyVerseLoading) return;
                             navigator.share({
                                 title: 'Versículo do Dia',
                                 text: `"${dailyVerse.text}" - ${dailyVerse.reference}`,
                             }).catch(console.error);
                         }
                     }}
-                    className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-900 font-bold py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 transition-all active:scale-95 shadow-lg shadow-amber-500/20"
+                    className={`w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-slate-900 font-bold py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 transition-all active:scale-95 shadow-lg shadow-amber-500/20 ${isDailyVerseLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
                     <Share2 size={20} />
                     <span>Compartilhar</span>
