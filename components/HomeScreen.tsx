@@ -27,6 +27,7 @@ const HomeScreen: React.FC = () => {
 
     const [dailyVerse, setDailyVerse] = React.useState(FALLBACK_DAILY_VERSE);
     const [isDailyVerseLoading, setIsDailyVerseLoading] = React.useState(true);
+    const [lastRandomReference, setLastRandomReference] = React.useState<string | null>(null);
 
     const cycleTheme = () => {
         const themeKeys: AppTheme[] = ['hitech', 'jesus', 'medieval', 'kids', 'catholic', 'pentecostal'];
@@ -57,6 +58,22 @@ const HomeScreen: React.FC = () => {
         const [, book, chapterStr] = match;
         return { book, chapter: parseInt(chapterStr, 10) };
     }, []);
+
+    const extractBookName = React.useCallback((reference: string) => {
+        const match = reference.match(/^(.*)\s(\d+):(\d+)$/);
+        if (!match) return null;
+        return match[1];
+    }, []);
+
+    const verseByBook = React.useMemo(() => {
+        return FEATURED_VERSES.reduce<Record<string, string[]>>((acc, reference) => {
+            const book = extractBookName(reference);
+            if (!book) return acc;
+            if (!acc[book]) acc[book] = [];
+            acc[book].push(reference);
+            return acc;
+        }, {});
+    }, [extractBookName]);
 
     React.useEffect(() => {
         let isActive = true;
@@ -109,6 +126,31 @@ const HomeScreen: React.FC = () => {
             isActive = false;
         };
     }, [getDailyIndex, getLocalDateKey, getVerses]);
+
+    const handleRandomVerse = () => {
+        const books = Object.keys(verseByBook);
+        if (books.length === 0) return;
+
+        const pickRandomReference = () => {
+            const randomBook = books[Math.floor(Math.random() * books.length)];
+            const refs = verseByBook[randomBook];
+            return refs[Math.floor(Math.random() * refs.length)];
+        };
+
+        let reference = pickRandomReference();
+        let attempts = 0;
+        while (attempts < 5 && reference === lastRandomReference) {
+            reference = pickRandomReference();
+            attempts += 1;
+        }
+
+        setLastRandomReference(reference);
+        const target = parseReferenceToReader(reference);
+        if (target) {
+            setReaderState(target);
+            navigate('reader');
+        }
+    };
 
     const handleInstallClick = async () => {
         const outcome = await installPWA();
@@ -241,6 +283,15 @@ const HomeScreen: React.FC = () => {
                 >
                     <Share2 size={20} />
                     <span>Compartilhar</span>
+                </button>
+                <button
+                    onClick={() => {
+                        if (isDailyVerseLoading) return;
+                        handleRandomVerse();
+                    }}
+                    className={`w-full border border-amber-400/40 text-amber-200 font-semibold py-3 px-4 rounded-xl flex items-center justify-center space-x-2 transition-all active:scale-95 ${isDailyVerseLoading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-amber-400/10'}`}
+                >
+                    <span>Ir para Versículo Aleatório</span>
                 </button>
                 <button
                     onClick={() => {
