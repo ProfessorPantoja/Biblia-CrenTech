@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppTheme, BibleVersion } from '../types';
 import { THEMES } from '../config/constants';
-import { ChevronLeft, Type, Share2, Menu, Home, User, ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronLeft, Type, Share2, Menu, Home, User, ChevronRight, ChevronDown, Moon } from 'lucide-react';
 import { BIBLE_BOOKS, BibleBook } from '../utils/bibleData';
 import { useBible } from '../hooks/useBible';
 import { useApp } from '../contexts/AppContext';
@@ -28,6 +28,7 @@ const ReaderMode: React.FC = () => {
     const [showChapterSelector, setShowChapterSelector] = useState(false);
     const [fontSize, setFontSize] = useState(18);
     const [showFontControl, setShowFontControl] = useState(false);
+    const [isNightMode, setIsNightMode] = useState(false);
 
     // Fetch Chapter Content
     useEffect(() => {
@@ -171,11 +172,14 @@ const ReaderMode: React.FC = () => {
         }
     };
 
+    const readerBgClass = isNightMode ? 'bg-black text-slate-100' : currentTheme.bgClass;
+    const headerBgClass = isNightMode ? 'bg-black/90 border-slate-800' : currentTheme.bgClass;
+
     return (
-        <div className={`min-h-screen w-full flex flex-col relative ${currentTheme.bgClass} text-white transition-colors duration-500`}>
+        <div className={`min-h-screen w-full flex flex-col relative ${readerBgClass} transition-colors duration-500`}>
 
             {/* HEADER */}
-            <header className={`sticky top-0 z-30 p-4 pt-6 backdrop-blur-xl bg-opacity-80 border-b border-white/5 flex justify-between items-center shadow-sm ${currentTheme.bgClass}`}>
+            <header className={`sticky top-0 z-30 p-4 pt-6 backdrop-blur-xl bg-opacity-80 border-b border-white/5 flex justify-between items-center shadow-sm ${headerBgClass}`}>
                 <button
                     onClick={() => navigate('home')}
                     className="p-2 rounded-full hover:bg-white/10 transition-colors"
@@ -191,12 +195,21 @@ const ReaderMode: React.FC = () => {
                     <span className="text-xs opacity-50 uppercase tracking-widest">{bibleVersion}</span>
                 </div>
 
-                <button
-                    onClick={() => setShowFontControl(!showFontControl)}
-                    className="p-2 rounded-full hover:bg-white/10 transition-colors"
-                >
-                    <Type size={24} className={currentTheme.textClass} />
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setShowFontControl(!showFontControl)}
+                        className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                    >
+                        <Type size={24} className={currentTheme.textClass} />
+                    </button>
+                    <button
+                        onClick={() => setIsNightMode(prev => !prev)}
+                        className={`p-2 rounded-full transition-colors ${isNightMode ? 'bg-amber-400/20 text-amber-300' : 'hover:bg-white/10'}`}
+                        title="Modo Noturno"
+                    >
+                        <Moon size={20} />
+                    </button>
+                </div>
             </header>
 
             {/* FONT CONTROL OVERLAY */}
@@ -253,7 +266,7 @@ const ReaderMode: React.FC = () => {
             )}
 
             {/* MAIN CONTENT */}
-            <main className="flex-1 overflow-y-auto px-6 py-6 pb-32">
+            <main className={`flex-1 overflow-y-auto px-6 py-6 pb-32 ${isNightMode ? 'bg-black/40' : ''}`}>
                 <div className="max-w-2xl mx-auto mb-4 flex items-center justify-between gap-3">
                     <button
                         onClick={handleHighlightAgain}

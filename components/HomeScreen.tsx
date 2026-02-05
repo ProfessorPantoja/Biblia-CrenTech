@@ -17,7 +17,7 @@ const FALLBACK_DAILY_VERSE = {
 const DAILY_VERSE_CACHE_KEY = 'bible_crentech_daily_verse';
 
 const HomeScreen: React.FC = () => {
-    const { appTheme, setAppTheme, lastReading, setReaderState } = useApp();
+    const { appTheme, setAppTheme, lastReading, setReaderState, history } = useApp();
     const { navigate } = useNavigation();
     const { isInstallable, install: installPWA } = usePWAInstall();
     const { getVerses } = useBible();
@@ -61,6 +61,17 @@ const HomeScreen: React.FC = () => {
             chapter: parseInt(chapterStr, 10),
             verse: parseInt(verseStr, 10)
         };
+    }, []);
+
+    const recentHistory = React.useMemo(() => {
+        if (!history || history.length === 0) return [];
+        return history.slice(-3).reverse();
+    }, [history]);
+
+    const formatVersePreview = React.useCallback((text: string) => {
+        const clean = text.trim();
+        if (clean.length <= 90) return clean;
+        return `${clean.slice(0, 90)}...`;
     }, []);
 
     const extractBookName = React.useCallback((reference: string) => {
@@ -373,6 +384,37 @@ const HomeScreen: React.FC = () => {
                 </button>
 
             </main>
+
+            {/* RECENT HISTORY */}
+            {recentHistory.length > 0 && (
+                <section className="z-10 space-y-3">
+                    <h3 className={`text-xs font-bold uppercase tracking-widest ${currentTheme.textClass} opacity-60`}>
+                        Últimos Versículos
+                    </h3>
+                    <div className="space-y-2">
+                        {recentHistory.map((item, idx) => (
+                            <button
+                                key={`${item.book}-${item.chapter}-${item.verse}-${idx}`}
+                                onClick={() => {
+                                    setReaderState({ book: item.book, chapter: item.chapter, verse: item.verse });
+                                    navigate('reader');
+                                }}
+                                className="w-full rounded-xl p-4 backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all text-left"
+                            >
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className={`text-sm font-semibold ${currentTheme.textClass}`}>
+                                        {item.book} {item.chapter}:{item.verse}
+                                    </span>
+                                    <ChevronRight size={14} className={`${currentTheme.textClass} opacity-50`} />
+                                </div>
+                                <p className={`${currentTheme.textClass} opacity-70 text-xs leading-relaxed`}>
+                                    {formatVersePreview(item.text)}
+                                </p>
+                            </button>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* CONTINUE READING FOOTER */}
             <footer className="z-10 pb-4">
