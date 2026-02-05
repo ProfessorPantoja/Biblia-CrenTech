@@ -7,6 +7,12 @@
 >
 > If you need to manipulate these files, use scripts (Node.js/Python) or shell commands. NEVER use `view_file` on them.
 
+# Prioridade Absoluta
+
+> [!IMPORTANT]
+> **NÃO PODE QUEBRAR O APP.**
+> Qualquer alteração deve preservar o funcionamento atual. Se houver risco, sinalize antes e proponha a alternativa mais segura.
+
 # Histórico do Assistente
 
 > [!NOTE]
@@ -22,6 +28,14 @@
 > 3. **UTILIDADE**: Cada feature deve resolver um problema real.
 > 4. **DESIGN**: Simples, Bonito e Premium.
 > 5. **ROBUSTEZ**: Código modular, escalável e limpo. "Construir uma boa casa" sem quebrar o que já existe.
+
+# Favoritos (Versículos com Estrela)
+
+> [!NOTE]
+> **Favoritos** são versículos marcados com estrela pelo usuário.
+> - Aparecem na Home em uma lista com rolagem.
+> - Devem ser persistidos localmente (sem quebrar o app).
+> - O foco inicial é no Leitor; outras áreas podem receber a estrela depois.
 
 # Proactive Advisor Rule
 

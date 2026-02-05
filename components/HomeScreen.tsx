@@ -17,7 +17,7 @@ const FALLBACK_DAILY_VERSE = {
 const DAILY_VERSE_CACHE_KEY = 'bible_crentech_daily_verse';
 
 const HomeScreen: React.FC = () => {
-    const { appTheme, setAppTheme, lastReading, setReaderState, history } = useApp();
+    const { appTheme, setAppTheme, lastReading, setReaderState, favorites } = useApp();
     const { navigate } = useNavigation();
     const { isInstallable, install: installPWA } = usePWAInstall();
     const { getVerses } = useBible();
@@ -62,11 +62,6 @@ const HomeScreen: React.FC = () => {
             verse: parseInt(verseStr, 10)
         };
     }, []);
-
-    const recentHistory = React.useMemo(() => {
-        if (!history || history.length === 0) return [];
-        return history.slice(-3).reverse();
-    }, [history]);
 
     const formatVersePreview = React.useCallback((text: string) => {
         const clean = text.trim();
@@ -385,14 +380,14 @@ const HomeScreen: React.FC = () => {
 
             </main>
 
-            {/* RECENT HISTORY */}
-            {recentHistory.length > 0 && (
+            {/* FAVORITES */}
+            {favorites.length > 0 && (
                 <section className="z-10 space-y-3">
                     <h3 className={`text-xs font-bold uppercase tracking-widest ${currentTheme.textClass} opacity-60`}>
-                        Últimos Versículos
+                        Favoritos
                     </h3>
-                    <div className="space-y-2">
-                        {recentHistory.map((item, idx) => (
+                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                        {favorites.map((item, idx) => (
                             <button
                                 key={`${item.book}-${item.chapter}-${item.verse}-${idx}`}
                                 onClick={() => {

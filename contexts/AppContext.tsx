@@ -21,6 +21,9 @@ interface AppContextType {
     // Last Reading (persistent)
     lastReading: { book: string; chapter: number } | null;
     setLastReading: React.Dispatch<React.SetStateAction<{ book: string; chapter: number } | null>>;
+    // Favorites (starred verses)
+    favorites: VerseReference[];
+    toggleFavorite: (verse: VerseReference) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -33,6 +36,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const [isMuted, setIsMuted] = useState(true);
     const [readerState, setReaderState] = useState<{ book: string; chapter: number; verse?: number } | null>(null);
     const [lastReading, setLastReading] = useState<{ book: string; chapter: number } | null>(null);
+    const [favorites, setFavorites] = useState<VerseReference[]>([]);
 
     // Load Data
     useEffect(() => {
@@ -40,7 +44,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             history: [] as VerseReference[],
             theme: 'hitech' as AppTheme,
             version: 'ACF' as BibleVersion,
-            lastReading: null as { book: string; chapter: number } | null
+            lastReading: null as { book: string; chapter: number } | null,
+            favorites: [] as VerseReference[]
         });
 
         if (savedData.history && Array.isArray(savedData.history)) {
@@ -50,6 +55,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         if (savedData.theme) setAppTheme(savedData.theme);
         if (savedData.version) setBibleVersion(savedData.version);
         if (savedData.lastReading) setLastReading(savedData.lastReading);
+        if (savedData.favorites && Array.isArray(savedData.favorites)) {
+            setFavorites(savedData.favorites);
+        }
     }, []);
 
     // Save Data
@@ -58,10 +66,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             history: history.slice(-50),
             theme: appTheme,
             version: bibleVersion,
-            lastReading
+            lastReading,
+            favorites
         };
         StorageService.save('bible_crentech_data', dataToSave);
-    }, [history, appTheme, bibleVersion, lastReading]);
+    }, [history, appTheme, bibleVersion, lastReading, favorites]);
 
     const toggleMute = () => {
         const newMutedState = !isMuted;
@@ -75,6 +84,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     const addToHistory = (verse: VerseReference) => {
         setHistory(prev => [...prev, verse]);
+    };
+
+    const toggleFavorite = (verse: VerseReference) => {
+        setFavorites(prev => {
+            const exists = prev.some(v => v.book === verse.book && v.chapter === verse.chapter && v.verse === verse.verse);
+            if (exists) {
+                return prev.filter(v => !(v.book === verse.book && v.chapter === verse.chapter && v.verse === verse.verse));
+            }
+            return [verse, ...prev].slice(0, 100);
+        });
     };
 
     return (
@@ -93,7 +112,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             readerState,
             setReaderState,
             lastReading,
-            setLastReading
+            setLastReading,
+            favorites,
+            toggleFavorite
         }}>
             {children}
         </AppContext.Provider>

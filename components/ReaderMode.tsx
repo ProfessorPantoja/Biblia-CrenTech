@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { AppTheme, BibleVersion } from '../types';
 import { THEMES } from '../config/constants';
-import { ChevronLeft, Type, Share2, Menu, Home, User, ChevronRight, ChevronDown, Moon } from 'lucide-react';
+import { ChevronLeft, Type, Share2, Menu, Home, User, ChevronRight, ChevronDown, Moon, Star } from 'lucide-react';
 import { BIBLE_BOOKS, BibleBook } from '../utils/bibleData';
 import { useBible } from '../hooks/useBible';
 import { useApp } from '../contexts/AppContext';
 import { useNavigation } from '../contexts/NavigationContext';
 
 const ReaderMode: React.FC = () => {
-    const { appTheme, bibleVersion, setLastReading } = useApp();
+    const { appTheme, bibleVersion, setLastReading, favorites, toggleFavorite } = useApp();
     const { navigate } = useNavigation();
     const currentTheme = THEMES[appTheme];
     const { getVerses } = useBible();
@@ -122,6 +122,28 @@ const ReaderMode: React.FC = () => {
         }
     };
 
+    const getCurrentTargetVerse = () => {
+        if (lastTargetVerse) return lastTargetVerse;
+        return 1;
+    };
+
+    const buildFavoritePayload = () => {
+        const verseNumber = getCurrentTargetVerse();
+        const verseText = chapterContent[verseNumber - 1]?.text;
+        if (!verseText) return null;
+        return {
+            book: currentBook.name,
+            chapter: currentChapter,
+            verse: verseNumber,
+            text: verseText
+        };
+    };
+
+    const isFavorite = React.useMemo(() => {
+        const verseNumber = getCurrentTargetVerse();
+        return favorites.some(v => v.book === currentBook.name && v.chapter === currentChapter && v.verse === verseNumber);
+    }, [favorites, currentBook.name, currentChapter, lastTargetVerse]);
+
     // Handlers
     const handleBookSelect = (book: BibleBook) => {
         setCurrentBook(book);
@@ -196,6 +218,18 @@ const ReaderMode: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => {
+                            const payload = buildFavoritePayload();
+                            if (payload) {
+                                toggleFavorite(payload);
+                            }
+                        }}
+                        className={`p-2 rounded-full transition-colors ${isFavorite ? 'bg-amber-400/20 text-amber-300' : 'hover:bg-white/10'}`}
+                        title="Favoritar versículo"
+                    >
+                        <Star size={20} fill={isFavorite ? 'currentColor' : 'none'} />
+                    </button>
                     <button
                         onClick={() => setShowFontControl(!showFontControl)}
                         className="p-2 rounded-full hover:bg-white/10 transition-colors"
