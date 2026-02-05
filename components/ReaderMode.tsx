@@ -21,6 +21,8 @@ const ReaderMode: React.FC = () => {
     const [highlightVerse, setHighlightVerse] = useState<number | null>(null);
     const [isHighlightPinned, setIsHighlightPinned] = useState(false);
     const [lastTargetVerse, setLastTargetVerse] = useState<number | null>(null);
+    const pendingVerseScrollRef = React.useRef(false);
+    const scrollRetryRef = React.useRef(0);
     const [isLoading, setIsLoading] = useState(false);
     const [showBookSelector, setShowBookSelector] = useState(false);
     const [showChapterSelector, setShowChapterSelector] = useState(false);
@@ -46,8 +48,10 @@ const ReaderMode: React.FC = () => {
 
         fetchChapter();
         setLastReading({ book: currentBook.name, chapter: currentChapter });
-        // Scroll to top on change
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Scroll to top on change (but not when jumping to a specific verse)
+        if (!pendingVerseScrollRef.current) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     }, [currentBook, currentChapter, getVerses, setLastReading]);
 
     // Check for navigation state from SearchMode
@@ -60,6 +64,7 @@ const ReaderMode: React.FC = () => {
                 setCurrentBook(book);
                 setCurrentChapter(readerState.chapter);
                 setScrollVerse(readerState.verse ?? null);
+                pendingVerseScrollRef.current = Boolean(readerState.verse);
             }
             // Clear state after consuming
             setReaderState(null);
@@ -68,13 +73,32 @@ const ReaderMode: React.FC = () => {
 
     useEffect(() => {
         if (!scrollVerse || isLoading || chapterContent.length === 0) return;
-        const verseElement = document.getElementById(`verse-${scrollVerse}`);
-        if (verseElement) {
-            verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        const tryScroll = () => {
+            const verseElement = document.getElementById(`verse-${scrollVerse}`);
+            if (!verseElement) return false;
+
+            verseElement.scrollIntoView({ behavior: 'auto', block: 'start' });
+            requestAnimationFrame(() => {
+                window.scrollBy({ top: -96, behavior: 'auto' });
+            });
+            return true;
+        };
+
+        const didScroll = tryScroll();
+        if (!didScroll && scrollRetryRef.current < 3) {
+            scrollRetryRef.current += 1;
+            const timer = window.setTimeout(() => {
+                tryScroll();
+            }, 80);
+            return () => window.clearTimeout(timer);
         }
+
+        scrollRetryRef.current = 0;
         setHighlightVerse(scrollVerse);
         setLastTargetVerse(scrollVerse);
         setScrollVerse(null);
+        pendingVerseScrollRef.current = false;
     }, [scrollVerse, isLoading, chapterContent.length]);
 
     useEffect(() => {
@@ -90,7 +114,10 @@ const ReaderMode: React.FC = () => {
         setHighlightVerse(lastTargetVerse);
         const verseElement = document.getElementById(`verse-${lastTargetVerse}`);
         if (verseElement) {
-            verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            verseElement.scrollIntoView({ behavior: 'auto', block: 'start' });
+            requestAnimationFrame(() => {
+                window.scrollBy({ top: -96, behavior: 'auto' });
+            });
         }
     };
 
