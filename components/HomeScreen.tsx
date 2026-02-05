@@ -5,14 +5,24 @@ import { Mic, BookOpen, History, Gamepad2, Share2, ChevronRight, Download, Palet
 import { useApp } from '../contexts/AppContext';
 import { useNavigation } from '../contexts/NavigationContext';
 import { usePWAInstall } from '../hooks/usePWAInstall';
+import { useBible } from '../hooks/useBible';
+import { FEATURED_VERSES } from '../data/featuredVerses';
+
+const FALLBACK_DAILY_VERSE = {
+    text: 'O Senhor é o meu pastor; de nada terei falta.',
+    reference: 'Salmos 23:1'
+};
 
 const HomeScreen: React.FC = () => {
     const { appTheme, setAppTheme } = useApp();
     const { navigate } = useNavigation();
     const { isInstallable, install: installPWA } = usePWAInstall();
+    const { getVerses } = useBible();
     const userName = "Visitante";
 
     const currentTheme = THEMES[appTheme];
+
+    const [dailyVerse, setDailyVerse] = React.useState(FALLBACK_DAILY_VERSE);
 
     const cycleTheme = () => {
         const themeKeys: AppTheme[] = ['hitech', 'jesus', 'medieval', 'kids', 'catholic', 'pentecostal'];
@@ -22,6 +32,43 @@ const HomeScreen: React.FC = () => {
     };
 
     const [showInstallInstructions, setShowInstallInstructions] = React.useState(false);
+
+    const getDailyIndex = React.useCallback(() => {
+        const now = new Date();
+        const localMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const dayNumber = Math.floor(localMidnight.getTime() / 86400000);
+        return dayNumber % FEATURED_VERSES.length;
+    }, []);
+
+    React.useEffect(() => {
+        let isActive = true;
+
+        const loadDailyVerse = async () => {
+            const index = getDailyIndex();
+            const reference = FEATURED_VERSES[index];
+            const result = await getVerses(reference);
+
+            if (!isActive) return;
+
+            if (result && result.length > 0) {
+                setDailyVerse({
+                    text: result[0].text,
+                    reference: result[0].reference
+                });
+            } else {
+                setDailyVerse({
+                    text: FALLBACK_DAILY_VERSE.text,
+                    reference
+                });
+            }
+        };
+
+        loadDailyVerse();
+
+        return () => {
+            isActive = false;
+        };
+    }, [getDailyIndex, getVerses]);
 
     const handleInstallClick = async () => {
         const outcome = await installPWA();
@@ -134,10 +181,10 @@ const HomeScreen: React.FC = () => {
                 <h2 className="text-xs font-bold uppercase tracking-widest text-amber-400">Versículo do Dia</h2>
                 <blockquote className="flex-grow">
                     <p className={`text-xl ${currentTheme.textClass} font-medium leading-relaxed`}>
-                        "O Senhor é o meu pastor; de nada terei falta."
+                        {"\"" + dailyVerse.text + "\""}
                     </p>
                     <cite className={`mt-3 block text-right ${currentTheme.textClass} opacity-60 text-sm font-serif italic`}>
-                        Salmos 23:1
+                        {dailyVerse.reference}
                     </cite>
                 </blockquote>
                 <button
@@ -145,7 +192,7 @@ const HomeScreen: React.FC = () => {
                         if (navigator.share) {
                             navigator.share({
                                 title: 'Versículo do Dia',
-                                text: '"O Senhor é o meu pastor; de nada terei falta." - Salmos 23:1',
+                                text: `"${dailyVerse.text}" - ${dailyVerse.reference}`,
                             }).catch(console.error);
                         }
                     }}
