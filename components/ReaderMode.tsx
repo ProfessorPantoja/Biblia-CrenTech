@@ -17,6 +17,10 @@ const ReaderMode: React.FC = () => {
     const [currentBook, setCurrentBook] = useState<BibleBook>(BIBLE_BOOKS[0]); // Default Genesis
     const [currentChapter, setCurrentChapter] = useState(1);
     const [chapterContent, setChapterContent] = useState<{ reference: string; text: string }[]>([]);
+    const [scrollVerse, setScrollVerse] = useState<number | null>(null);
+    const [highlightVerse, setHighlightVerse] = useState<number | null>(null);
+    const [isHighlightPinned, setIsHighlightPinned] = useState(false);
+    const [lastTargetVerse, setLastTargetVerse] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [showBookSelector, setShowBookSelector] = useState(false);
     const [showChapterSelector, setShowChapterSelector] = useState(false);
@@ -55,11 +59,36 @@ const ReaderMode: React.FC = () => {
             if (book) {
                 setCurrentBook(book);
                 setCurrentChapter(readerState.chapter);
+                setScrollVerse(readerState.verse ?? null);
             }
             // Clear state after consuming
             setReaderState(null);
         }
     }, [readerState, setReaderState]);
+
+    useEffect(() => {
+        if (!scrollVerse || isLoading || chapterContent.length === 0) return;
+        const verseElement = document.getElementById(`verse-${scrollVerse}`);
+        if (verseElement) {
+            verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        setHighlightVerse(scrollVerse);
+        setLastTargetVerse(scrollVerse);
+        setScrollVerse(null);
+    }, [scrollVerse, isLoading, chapterContent.length]);
+
+    useEffect(() => {
+        if (!highlightVerse || isHighlightPinned) return;
+        const timer = window.setTimeout(() => {
+            setHighlightVerse(null);
+        }, 3500);
+        return () => window.clearTimeout(timer);
+    }, [highlightVerse, isHighlightPinned]);
+
+    const handleHighlightAgain = () => {
+        if (!lastTargetVerse) return;
+        setHighlightVerse(lastTargetVerse);
+    };
 
     // Handlers
     const handleBookSelect = (book: BibleBook) => {
@@ -194,6 +223,21 @@ const ReaderMode: React.FC = () => {
 
             {/* MAIN CONTENT */}
             <main className="flex-1 overflow-y-auto px-6 py-6 pb-32">
+                <div className="max-w-2xl mx-auto mb-4 flex items-center justify-between gap-3">
+                    <button
+                        onClick={handleHighlightAgain}
+                        disabled={!lastTargetVerse}
+                        className="px-3 py-2 rounded-lg text-xs font-semibold border border-amber-400/40 text-amber-200 hover:bg-amber-400/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    >
+                        Destacar Novamente
+                    </button>
+                    <button
+                        onClick={() => setIsHighlightPinned(prev => !prev)}
+                        className="px-3 py-2 rounded-lg text-xs font-semibold border border-white/10 text-white/80 hover:bg-white/10 transition-colors"
+                    >
+                        {isHighlightPinned ? 'Permanente: LIGADO' : 'Permanente: DESLIGADO'}
+                    </button>
+                </div>
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center h-64 space-y-4">
                         <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
@@ -202,7 +246,11 @@ const ReaderMode: React.FC = () => {
                 ) : (
                     <div className="font-serif leading-loose space-y-6 max-w-2xl mx-auto" style={{ fontSize: `${fontSize}px` }}>
                         {chapterContent.map((verse, idx) => (
-                            <p key={idx} className="relative pl-2">
+                            <p
+                                key={idx}
+                                id={`verse-${idx + 1}`}
+                                className={`relative pl-2 rounded-lg transition-colors duration-700 ${highlightVerse === idx + 1 ? 'bg-amber-400/15 ring-1 ring-amber-400/40' : ''}`}
+                            >
                                 <sup className={`font-bold ${currentTheme.accentClass} mr-2 text-xs opacity-80 select-none`}>{idx + 1}</sup>
                                 <span className={`${currentTheme.textClass} opacity-90`}>{verse.text}</span>
                             </p>

@@ -55,8 +55,12 @@ const HomeScreen: React.FC = () => {
     const parseReferenceToReader = React.useCallback((reference: string) => {
         const match = reference.match(/^(.*)\s(\d+):(\d+)$/);
         if (!match) return null;
-        const [, book, chapterStr] = match;
-        return { book, chapter: parseInt(chapterStr, 10) };
+        const [, book, chapterStr, verseStr] = match;
+        return {
+            book,
+            chapter: parseInt(chapterStr, 10),
+            verse: parseInt(verseStr, 10)
+        };
     }, []);
 
     const extractBookName = React.useCallback((reference: string) => {

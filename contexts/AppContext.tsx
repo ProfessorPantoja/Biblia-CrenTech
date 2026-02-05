@@ -16,8 +16,8 @@ interface AppContextType {
     isMuted: boolean;
     toggleMute: () => void;
     // Reader Navigation State
-    readerState: { book: string; chapter: number } | null;
-    setReaderState: React.Dispatch<React.SetStateAction<{ book: string; chapter: number } | null>>;
+    readerState: { book: string; chapter: number; verse?: number } | null;
+    setReaderState: React.Dispatch<React.SetStateAction<{ book: string; chapter: number; verse?: number } | null>>;
     // Last Reading (persistent)
     lastReading: { book: string; chapter: number } | null;
     setLastReading: React.Dispatch<React.SetStateAction<{ book: string; chapter: number } | null>>;
@@ -31,7 +31,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const [history, setHistory] = useState<VerseReference[]>([]);
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
     const [isMuted, setIsMuted] = useState(true);
-    const [readerState, setReaderState] = useState<{ book: string; chapter: number } | null>(null);
+    const [readerState, setReaderState] = useState<{ book: string; chapter: number; verse?: number } | null>(null);
     const [lastReading, setLastReading] = useState<{ book: string; chapter: number } | null>(null);
 
     // Load Data
