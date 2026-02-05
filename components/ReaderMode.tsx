@@ -8,7 +8,7 @@ import { useApp } from '../contexts/AppContext';
 import { useNavigation } from '../contexts/NavigationContext';
 
 const ReaderMode: React.FC = () => {
-    const { appTheme, bibleVersion } = useApp();
+    const { appTheme, bibleVersion, setLastReading } = useApp();
     const { navigate } = useNavigation();
     const currentTheme = THEMES[appTheme];
     const { getVerses } = useBible();
@@ -41,9 +41,10 @@ const ReaderMode: React.FC = () => {
         };
 
         fetchChapter();
+        setLastReading({ book: currentBook.name, chapter: currentChapter });
         // Scroll to top on change
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, [currentBook, currentChapter, getVerses]);
+    }, [currentBook, currentChapter, getVerses, setLastReading]);
 
     // Check for navigation state from SearchMode
     const { readerState, setReaderState } = useApp();

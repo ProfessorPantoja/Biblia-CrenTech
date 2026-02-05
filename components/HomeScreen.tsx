@@ -7,14 +7,17 @@ import { useNavigation } from '../contexts/NavigationContext';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { useBible } from '../hooks/useBible';
 import { FEATURED_VERSES } from '../data/featuredVerses';
+import { StorageService } from '../services/StorageService';
 
 const FALLBACK_DAILY_VERSE = {
     text: 'O Senhor é o meu pastor; de nada terei falta.',
     reference: 'Salmos 23:1'
 };
 
+const DAILY_VERSE_CACHE_KEY = 'bible_crentech_daily_verse';
+
 const HomeScreen: React.FC = () => {
-    const { appTheme, setAppTheme } = useApp();
+    const { appTheme, setAppTheme, lastReading, setReaderState } = useApp();
     const { navigate } = useNavigation();
     const { isInstallable, install: installPWA } = usePWAInstall();
     const { getVerses } = useBible();
@@ -41,10 +44,40 @@ const HomeScreen: React.FC = () => {
         return dayNumber % FEATURED_VERSES.length;
     }, []);
 
+    const getLocalDateKey = React.useCallback(() => {
+        const now = new Date();
+        const month = `${now.getMonth() + 1}`.padStart(2, '0');
+        const day = `${now.getDate()}`.padStart(2, '0');
+        return `${now.getFullYear()}-${month}-${day}`;
+    }, []);
+
+    const parseReferenceToReader = React.useCallback((reference: string) => {
+        const match = reference.match(/^(.*)\s(\d+):(\d+)$/);
+        if (!match) return null;
+        const [, book, chapterStr] = match;
+        return { book, chapter: parseInt(chapterStr, 10) };
+    }, []);
+
     React.useEffect(() => {
         let isActive = true;
 
         const loadDailyVerse = async () => {
+            const dateKey = getLocalDateKey();
+            const cached = StorageService.load<{
+                dateKey: string;
+                text: string;
+                reference: string;
+            } | null>(DAILY_VERSE_CACHE_KEY, null);
+
+            if (cached && cached.dateKey === dateKey) {
+                setDailyVerse({
+                    text: cached.text,
+                    reference: cached.reference
+                });
+                setIsDailyVerseLoading(false);
+                return;
+            }
+
             const index = getDailyIndex();
             const reference = FEATURED_VERSES[index];
             const result = await getVerses(reference);
@@ -52,15 +85,19 @@ const HomeScreen: React.FC = () => {
             if (!isActive) return;
 
             if (result && result.length > 0) {
-                setDailyVerse({
+                const nextVerse = {
                     text: result[0].text,
                     reference: result[0].reference
-                });
+                };
+                setDailyVerse(nextVerse);
+                StorageService.save(DAILY_VERSE_CACHE_KEY, { dateKey, ...nextVerse });
             } else {
-                setDailyVerse({
+                const nextVerse = {
                     text: FALLBACK_DAILY_VERSE.text,
                     reference
-                });
+                };
+                setDailyVerse(nextVerse);
+                StorageService.save(DAILY_VERSE_CACHE_KEY, { dateKey, ...nextVerse });
             }
 
             setIsDailyVerseLoading(false);
@@ -71,7 +108,7 @@ const HomeScreen: React.FC = () => {
         return () => {
             isActive = false;
         };
-    }, [getDailyIndex, getVerses]);
+    }, [getDailyIndex, getLocalDateKey, getVerses]);
 
     const handleInstallClick = async () => {
         const outcome = await installPWA();
@@ -205,6 +242,20 @@ const HomeScreen: React.FC = () => {
                     <Share2 size={20} />
                     <span>Compartilhar</span>
                 </button>
+                <button
+                    onClick={() => {
+                        if (isDailyVerseLoading) return;
+                        const target = parseReferenceToReader(dailyVerse.reference);
+                        if (target) {
+                            setReaderState(target);
+                            navigate('reader');
+                        }
+                    }}
+                    className={`w-full border border-amber-400/50 text-amber-200 font-semibold py-3 px-4 rounded-xl flex items-center justify-center space-x-2 transition-all active:scale-95 ${isDailyVerseLoading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-amber-400/10'}`}
+                >
+                    <BookOpen size={18} />
+                    <span>Ler no Leitor</span>
+                </button>
             </div>
 
             {/* MAIN GRID */}
@@ -270,21 +321,29 @@ const HomeScreen: React.FC = () => {
 
             {/* CONTINUE READING FOOTER */}
             <footer className="z-10 pb-4">
-                <button className="w-full rounded-2xl p-5 backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all text-left group">
+                <button
+                    onClick={() => {
+                        if (lastReading) {
+                            setReaderState(lastReading);
+                        }
+                        navigate('reader');
+                    }}
+                    className="w-full rounded-2xl p-5 backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 transition-all text-left group"
+                >
                     <div className="flex justify-between items-center mb-3">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
                             <h4 className={`font-semibold ${currentTheme.textClass} text-sm uppercase tracking-wide`}>Continuar lendo</h4>
                         </div>
                         <span className={`${currentTheme.textClass} opacity-50 text-xs flex items-center gap-1`}>
-                            Gênesis 1 <ChevronRight size={14} />
+                            {lastReading ? `${lastReading.book} ${lastReading.chapter}` : 'Gênesis 1'} <ChevronRight size={14} />
                         </span>
                     </div>
 
                     <div className="w-full bg-slate-700/50 rounded-full h-2 mb-2 overflow-hidden">
-                        <div className="bg-gradient-to-r from-amber-400 to-amber-600 h-full rounded-full w-[10%]" />
+                        <div className="bg-gradient-to-r from-amber-400 to-amber-600 h-full rounded-full w-full" />
                     </div>
-                    <p className={`text-right text-[10px] ${currentTheme.textClass} opacity-40`}>10% do capítulo</p>
+                    <p className={`text-right text-[10px] ${currentTheme.textClass} opacity-40`}>{lastReading ? 'Capítulo salvo' : 'Capítulo inicial'}</p>
                 </button>
             </footer>
 

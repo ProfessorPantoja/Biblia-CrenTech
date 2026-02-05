@@ -18,6 +18,9 @@ interface AppContextType {
     // Reader Navigation State
     readerState: { book: string; chapter: number } | null;
     setReaderState: React.Dispatch<React.SetStateAction<{ book: string; chapter: number } | null>>;
+    // Last Reading (persistent)
+    lastReading: { book: string; chapter: number } | null;
+    setLastReading: React.Dispatch<React.SetStateAction<{ book: string; chapter: number } | null>>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -29,13 +32,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
     const [isMuted, setIsMuted] = useState(true);
     const [readerState, setReaderState] = useState<{ book: string; chapter: number } | null>(null);
+    const [lastReading, setLastReading] = useState<{ book: string; chapter: number } | null>(null);
 
     // Load Data
     useEffect(() => {
         const savedData = StorageService.load('bible_crentech_data', {
             history: [] as VerseReference[],
             theme: 'hitech' as AppTheme,
-            version: 'ACF' as BibleVersion
+            version: 'ACF' as BibleVersion,
+            lastReading: null as { book: string; chapter: number } | null
         });
 
         if (savedData.history && Array.isArray(savedData.history)) {
@@ -44,6 +49,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
         if (savedData.theme) setAppTheme(savedData.theme);
         if (savedData.version) setBibleVersion(savedData.version);
+        if (savedData.lastReading) setLastReading(savedData.lastReading);
     }, []);
 
     // Save Data
@@ -51,10 +57,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const dataToSave = {
             history: history.slice(-50),
             theme: appTheme,
-            version: bibleVersion
+            version: bibleVersion,
+            lastReading
         };
         StorageService.save('bible_crentech_data', dataToSave);
-    }, [history, appTheme, bibleVersion]);
+    }, [history, appTheme, bibleVersion, lastReading]);
 
     const toggleMute = () => {
         const newMutedState = !isMuted;
@@ -84,7 +91,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             isMuted,
             toggleMute,
             readerState,
-            setReaderState
+            setReaderState,
+            lastReading,
+            setLastReading
         }}>
             {children}
         </AppContext.Provider>
