@@ -1,24 +1,29 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 export const useWakeLock = () => {
     const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
+    const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+    const debugWakeLock = import.meta.env.VITE_WAKELOCK_DEBUG === '1';
 
     const requestWakeLock = useCallback(async () => {
         if ('wakeLock' in navigator) {
+            if (wakeLockRef.current) return;
             try {
                 const lock = await navigator.wakeLock.request('screen');
                 setWakeLock(lock);
-                console.log('Wake Lock active');
+                wakeLockRef.current = lock;
+                if (debugWakeLock) console.log('Wake Lock active');
 
                 lock.addEventListener('release', () => {
-                    console.log('Wake Lock released');
+                    if (debugWakeLock) console.log('Wake Lock released');
                     setWakeLock(null);
+                    wakeLockRef.current = null;
                 });
             } catch (err) {
                 console.error(`${err.name}, ${err.message}`);
             }
         }
-    }, []);
+    }, [debugWakeLock]);
 
     useEffect(() => {
         // Request lock on mount
@@ -26,7 +31,7 @@ export const useWakeLock = () => {
 
         // Re-request if visibility changes (e.g. user switches tabs and comes back)
         const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible' && !wakeLock) {
+            if (document.visibilityState === 'visible' && !wakeLockRef.current) {
                 requestWakeLock();
             }
         };
@@ -35,11 +40,11 @@ export const useWakeLock = () => {
 
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
-            if (wakeLock) {
-                wakeLock.release();
+            if (wakeLockRef.current) {
+                wakeLockRef.current.release();
             }
         };
-    }, [requestWakeLock, wakeLock]);
+    }, [requestWakeLock]);
 
     return { isLocked: !!wakeLock };
 };
