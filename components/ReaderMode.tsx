@@ -88,6 +88,10 @@ const ReaderMode: React.FC = () => {
     const handleHighlightAgain = () => {
         if (!lastTargetVerse) return;
         setHighlightVerse(lastTargetVerse);
+        const verseElement = document.getElementById(`verse-${lastTargetVerse}`);
+        if (verseElement) {
+            verseElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     };
 
     // Handlers
@@ -233,9 +237,16 @@ const ReaderMode: React.FC = () => {
                     </button>
                     <button
                         onClick={() => setIsHighlightPinned(prev => !prev)}
-                        className="px-3 py-2 rounded-lg text-xs font-semibold border border-white/10 text-white/80 hover:bg-white/10 transition-colors"
+                        className="px-3 py-2 rounded-lg text-xs font-semibold border border-white/10 text-white/80 hover:bg-white/10 transition-colors flex items-center gap-2"
                     >
-                        {isHighlightPinned ? 'Permanente: LIGADO' : 'Permanente: DESLIGADO'}
+                        <span>DESTAQUE PERMANENTE</span>
+                        <span
+                            className={`w-9 h-5 rounded-full flex items-center px-0.5 transition-colors ${isHighlightPinned ? 'bg-amber-400' : 'bg-white/15'}`}
+                        >
+                            <span
+                                className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${isHighlightPinned ? 'translate-x-4' : 'translate-x-0'}`}
+                            />
+                        </span>
                     </button>
                 </div>
                 {isLoading ? (
