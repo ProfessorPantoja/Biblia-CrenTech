@@ -2,7 +2,8 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { ContextData, HermeneuticsData, VerseReference, BibleVersion } from "../types";
 
-const MODEL_NAME = 'gemini-2.5-flash';
+const MODEL_NAME = import.meta.env.VITE_GEMINI_MODEL || 'gemini-3-flash-preview';
+const FALLBACK_MODEL = import.meta.env.VITE_GEMINI_MODEL_FALLBACK || 'gemini-2.5-flash';
 
 // Helper to get AI instance safely
 const getAI = () => {
@@ -174,7 +175,6 @@ export const getVerseContext = async (book: string, chapter: number, verse: numb
 
 export const getHermeneutics = async (book: string, chapter: number, verse: number, text: string): Promise<HermeneuticsData> => {
   try {
-    const ai = getAI();
     const prompt = `Faça uma análise hermenêutica PROFUNDA do versículo: "${text}" (${book} ${chapter}:${verse}).
     Analise O TEXTO ESPECÍFICO, não apenas o livro.
     
@@ -184,16 +184,29 @@ export const getHermeneutics = async (book: string, chapter: number, verse: numb
     3. Analise o contexto imediato (cena) e geral (teologia).
     4. Dê uma aplicação prática poderosa.`;
 
-    const response = await ai.models.generateContent({
-      model: MODEL_NAME,
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: hermeneuticsSchema,
-        temperature: 0.4,
+    const generateWithModel = async (model: string) => {
+      const ai = getAI();
+      const response = await ai.models.generateContent({
+        model,
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: hermeneuticsSchema,
+          temperature: 0.4,
+        }
+      });
+      return JSON.parse(response.text || "{}") as HermeneuticsData;
+    };
+
+    try {
+      return await generateWithModel(MODEL_NAME);
+    } catch (primaryError) {
+      console.warn("Hermeneutics failed on primary model, trying fallback...", primaryError);
+      if (FALLBACK_MODEL && FALLBACK_MODEL !== MODEL_NAME) {
+        return await generateWithModel(FALLBACK_MODEL);
       }
-    });
-    return JSON.parse(response.text || "{}") as HermeneuticsData;
+      throw primaryError;
+    }
   } catch (error) {
     console.error("Error fetching hermeneutics:", error);
     throw error;
