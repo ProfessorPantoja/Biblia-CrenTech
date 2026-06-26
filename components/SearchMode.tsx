@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AppStatus, VerseReference, BibleVersion, AppTheme } from '../types';
-import { searchVerseByAudio, searchVerseByTheme } from '../services/geminiService';
+import { searchVerseByAudio, searchVerseByTheme } from '../services/groqService';
 import RecorderButton from './RecorderButton';
 import VerseDisplay from './VerseDisplay';
 import Features from './Features';

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { BookOpen, School, Loader2, ChevronDown, ChevronUp, User, Users, MapPin, Zap } from 'lucide-react';
 import { ContextData, HermeneuticsData, VerseReference, BibleVersion } from '../types';
-import { getVerseContext, getHermeneutics } from '../services/geminiService';
+import { getVerseContext, getHermeneutics } from '../services/groqService';
 
 interface FeaturesProps {
   reference: VerseReference;
