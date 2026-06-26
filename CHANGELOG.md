@@ -3,6 +3,41 @@
 
 ---
 
+## 📅 Sessão: 26/06/2026 (retomada do projeto)
+
+> Contexto: retomada após o projeto ficar parado desde nov/2025. Antes das
+> mudanças foi feita uma auditoria técnica (ver `docs/RELATORIO_RETOMADA_2026-06-26.html`).
+
+### 🔄 1. Migração da IA: Gemini → Groq
+
+**Motivo**: troca de provedor de IA.
+
+- ✅ Removido `@google/genai` e o `services/geminiService.ts`
+- ✅ Criado `services/groqService.ts` com as mesmas 4 funções
+  (busca por tema, busca por voz, contexto, hermenêutica)
+- ✅ Busca por voz agora usa **Whisper do Groq** (transcrição) + modelo de texto
+- ✅ Chave passa a ser `VITE_GROQ_API_KEY` (não é mais injetada no bundle)
+- ✅ Adicionado `.env.example` e `vite-env.d.ts` (este zerou os 5 erros de type-check)
+
+**Pendência**: colar a chave real do Groq em `.env.local` para a IA voltar a funcionar.
+
+### 🎨 2. Tailwind: CDN → build
+
+- ✅ Saiu do `cdn.tailwindcss.com`; agora `tailwindcss` v3 + PostCSS no build
+- ✅ `tailwind.config.js`, `postcss.config.js` e `index.css` (corrige o 404 do index.css)
+- ✅ CSS gerado e purgado no build (~8 kB gzip)
+
+### 📴 3. PWA offline (Service Worker)
+
+- ✅ Adicionado `vite-plugin-pwa` (Workbox), `registerType: autoUpdate`
+- ✅ App shell em precache; JSONs da Bíblia em runtime cache (CacheFirst)
+- ✅ Manifest passa a ser gerado pelo plugin (removido `public/manifest.json`)
+
+**Próximos passos sugeridos**: proteger a chave da IA via backend (Vercel Functions),
+implementar a tela de Histórico, favoritos na Busca IA.
+
+---
+
 ## 📅 Sessão: 28/11/2025 (11:12 - 13:23)
 
 ### ✅ 1. Integração da Bíblia Offline (Lazy Loading)
