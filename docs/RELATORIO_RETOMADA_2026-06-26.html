@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bíblia CrenTech — Relatório de Retomada (26/06/2026)</title>
+<style>
+  :root{
+    --bg:#0e1116; --card:#171c24; --card2:#1f2630; --line:#2a323d;
+    --txt:#e7edf3; --muted:#9aa7b4; --gold:#d4af37; --accent:#3b82f6;
+    --red:#ef4444; --orange:#f59e0b; --yellow:#eab308; --green:#22c55e; --purple:#a855f7;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;line-height:1.6}
+  .wrap{max-width:1040px;margin:0 auto;padding:32px 20px 80px}
+  header.hero{background:linear-gradient(135deg,#450a0a 0%,#1f2630 60%,#0e1116 100%);
+    border:1px solid var(--line);border-radius:18px;padding:34px 30px;margin-bottom:28px}
+  header.hero h1{margin:0 0 6px;font-size:30px;letter-spacing:-.5px}
+  header.hero .sub{color:#f0d8a0;font-weight:600}
+  header.hero .meta{color:var(--muted);font-size:13px;margin-top:14px}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-right:6px}
+  .p-green{background:rgba(34,197,94,.15);color:#7ee2a1;border:1px solid rgba(34,197,94,.4)}
+  .p-red{background:rgba(239,68,68,.15);color:#ff9d9d;border:1px solid rgba(239,68,68,.4)}
+  .p-orange{background:rgba(245,158,11,.15);color:#ffce7a;border:1px solid rgba(245,158,11,.4)}
+  .p-blue{background:rgba(59,130,246,.15);color:#9cc3ff;border:1px solid rgba(59,130,246,.4)}
+  h2{font-size:22px;margin:38px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h2 .ico{margin-right:8px}
+  h3{font-size:17px;margin:22px 0 8px}
+  p{color:var(--txt)}
+  .muted{color:var(--muted)}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:720px){.g3,.g2{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .kpi{text-align:center}
+  .kpi .n{font-size:30px;font-weight:800;line-height:1.1}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+  .finding{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--muted);
+    border-radius:10px;padding:14px 16px;margin:12px 0}
+  .finding.crit{border-left-color:var(--red)}
+  .finding.high{border-left-color:var(--orange)}
+  .finding.med{border-left-color:var(--yellow)}
+  .finding.low{border-left-color:var(--accent)}
+  .finding .tag{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:6px;margin-right:8px}
+  .t-crit{background:var(--red);color:#fff}
+  .t-high{background:var(--orange);color:#1a1a1a}
+  .t-med{background:var(--yellow);color:#1a1a1a}
+  .t-low{background:var(--accent);color:#fff}
+  .finding h4{margin:0 0 6px;font-size:15px;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+  .finding p{margin:6px 0 0;font-size:14px;color:#cdd6e0}
+  .finding .fix{margin-top:8px;font-size:13px;color:#a9e6c0}
+  .finding .fix b{color:#7ee2a1}
+  code{background:#0b0f14;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:13px;color:#ffd9a8;font-family:"SF Mono",Consolas,monospace}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .ok{color:#7ee2a1;font-weight:700}
+  .no{color:#ff9d9d;font-weight:700}
+  .wip{color:#ffce7a;font-weight:700}
+  ul.clean{list-style:none;padding-left:0}
+  ul.clean li{padding:6px 0 6px 26px;position:relative;border-bottom:1px dashed var(--line)}
+  ul.clean li:before{content:"▸";position:absolute;left:4px;color:var(--gold)}
+  .road{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:14px 0}
+  .road .head{padding:12px 16px;font-weight:800;font-size:15px}
+  .road .body{padding:14px 18px;background:var(--card)}
+  .road.r1 .head{background:rgba(34,197,94,.18);color:#9ff0bd}
+  .road.r2 .head{background:rgba(59,130,246,.18);color:#b3d1ff}
+  .road.r3 .head{background:rgba(168,85,247,.18);color:#dcb6ff}
+  .note{background:var(--card2);border:1px dashed var(--line);border-radius:10px;padding:14px 16px;font-size:14px;color:#cdd6e0}
+  .start{background:linear-gradient(135deg,#13351f,#171c24);border:1px solid rgba(34,197,94,.4);border-radius:14px;padding:22px 24px;margin-top:10px}
+  .start ol{margin:10px 0 0;padding-left:20px}
+  .start li{margin:8px 0}
+  footer{margin-top:50px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:20px}
+  .legend{font-size:12px;color:var(--muted);margin:6px 0 18px}
+  .legend span{margin-right:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>📖 Bíblia CrenTech</h1>
+  <div class="sub">Relatório de Retomada — Auditoria Técnica + Produto</div>
+  <div class="meta">
+    <span class="pill p-blue">26 de junho de 2026</span>
+    <span class="pill p-green">Build OK</span>
+    <span class="pill p-orange">Parado desde nov/2025</span>
+    <span class="pill p-blue">React 19 + Vite + Gemini</span>
+    <br><br>
+    Projeto: <b>bíblia-crentech-legado</b> &nbsp;•&nbsp; Branch: <code>main</code> (limpa, sincronizada) &nbsp;•&nbsp; Autor: Fabio Pantoja
+  </div>
+</header>
+
+<!-- RESUMO EXECUTIVO -->
+<div class="note">
+  <b>Resumo em uma frase:</b> o app está <b>vivo e funcional</b> — compila, builda e tem uma base de código já refatorada e organizada.
+  O que trava a retomada não são bugs graves, e sim <b>dívidas técnicas de "produção"</b> (chave de IA exposta, Tailwind via CDN, PWA que não funciona offline de verdade)
+  e <b>2 telas inacabadas</b> (Histórico e Quiz). Nada disso impede o app de rodar hoje. Abaixo está tudo priorizado para você decidir por onde ir.
+</div>
+
+<!-- KPIs -->
+<h2><span class="ico">📊</span>Saúde do Projeto (números)</h2>
+<div class="grid g3">
+  <div class="card kpi"><div class="n ok">✓</div><div class="l">Build de produção</div></div>
+  <div class="card kpi"><div class="n" style="color:var(--orange)">5</div><div class="l">Erros de type-check</div></div>
+  <div class="card kpi"><div class="n">3.642</div><div class="l">Linhas de código (TS/TSX)</div></div>
+  <div class="card kpi"><div class="n">523 kB</div><div class="l">Bundle JS (132 kB gzip)</div></div>
+  <div class="card kpi"><div class="n">3</div><div class="l">Arquivos órfãos (código morto)</div></div>
+  <div class="card kpi"><div class="n no">0</div><div class="l">Testes automatizados</div></div>
+</div>
+<p class="muted" style="margin-top:10px;font-size:13px">
+  Observação boa: o <code>App.tsx</code> que antes tinha ~600 linhas hoje tem <b>58</b>. A refatoração planejada (V3) realmente aconteceu — o código está bem mais saudável do que os documentos antigos sugerem.
+</p>
+
+<!-- ACHADOS TECNICOS -->
+<h2><span class="ico">🔧</span>Achados Técnicos (por severidade)</h2>
+<div class="legend">
+  <span><span class="t-crit tag">crítico</span> resolver antes de divulgar</span>
+  <span><span class="t-high tag">alto</span> importante p/ produção</span>
+  <span><span class="t-med tag">médio</span> qualidade/manutenção</span>
+  <span><span class="t-low tag">baixo</span> polimento</span>
+</div>
+
+<div class="finding crit">
+  <h4><span class="tag t-crit">crítico</span> Chave da API do Gemini exposta no navegador</h4>
+  <p>Em <code>vite.config.ts</code> a <code>GEMINI_API_KEY</code> é injetada direto no bundle do cliente (<code>process.env.API_KEY</code>). Isso significa que <b>qualquer pessoa</b> que abrir o app consegue extrair sua chave do JavaScript e usá-la — gerando <b>custo na sua conta Google</b> e risco de abuso.</p>
+  <p class="fix"><b>Como resolver:</b> mover as chamadas do Gemini para um pequeno backend/serverless (ex.: Vercel Functions, já que o deploy é Vercel) que guarda a chave no servidor. Alternativa rápida: restringir a chave por domínio/HTTP referrer e cota no Google Cloud Console enquanto não há backend.</p>
+</div>
+
+<div class="finding crit">
+  <h4><span class="tag t-crit">crítico</span> Modelo default <code>gemini-3-flash-preview</code> que não existe no ambiente</h4>
+  <p>Em <code>services/geminiService.ts</code> o modelo é <code>import.meta.env.VITE_GEMINI_MODEL || 'gemini-3-flash-preview'</code>, mas <b>não existe <code>VITE_GEMINI_MODEL</code> no <code>.env.local</code></b>. Ou seja, hoje o app tenta sempre um modelo "preview" como padrão. Modelo preview como default de produção é arriscado (pode sair do ar/mudar nome) e, se falhar, gasta uma chamada extra antes de cair no fallback <code>gemini-2.5-flash</code>.</p>
+  <p class="fix"><b>Como resolver:</b> definir um modelo estável e atual como default (ex.: <code>gemini-2.5-flash</code>) e só usar preview quando explicitamente setado no <code>.env</code>. Validar qual é o modelo Gemini mais recente disponível na sua conta antes de fixar.</p>
+</div>
+
+<div class="finding high">
+  <h4><span class="tag t-high">alto</span> Tailwind via CDN (<code>cdn.tailwindcss.com</code>)</h4>
+  <p>O <code>index.html</code> carrega o Tailwind por um <code>&lt;script&gt;</code> de CDN. O próprio Tailwind avisa que <b>isso não é para produção</b>: depende de internet, é mais lento, não faz "tree-shaking" (manda CSS demais) e pode piscar sem estilo no carregamento.</p>
+  <p class="fix"><b>Como resolver:</b> instalar o Tailwind como dependência de build (PostCSS) e gerar o CSS no <code>vite build</code>. De quebra resolve o item do <code>index.css</code> abaixo.</p>
+</div>
+
+<div class="finding high">
+  <h4><span class="tag t-high">alto</span> PWA não funciona offline de verdade (sem Service Worker)</h4>
+  <p>Existe <code>manifest.json</code> e a Bíblia está em 66 JSONs locais, mas <b>não há Service Worker</b>. Então o app não abre offline e os JSONs não ficam em cache — a promessa de "Bíblia offline" do CHANGELOG não se cumpre na prática.</p>
+  <p class="fix"><b>Como resolver:</b> adicionar <code>vite-plugin-pwa</code> (workbox) para cache de assets e dos JSONs bíblicos. É um ganho enorme de percepção de qualidade com pouco esforço.</p>
+</div>
+
+<div class="finding high">
+  <h4><span class="tag t-high">alto</span> <code>index.css</code> referenciado mas inexistente (404)</h4>
+  <p>O <code>index.html</code> tem <code>&lt;link rel="stylesheet" href="/index.css"&gt;</code>, mas o arquivo <b>não existe</b>. O build avisa isso explicitamente. Hoje não quebra nada só porque o Tailwind CDN cobre os estilos, mas é um 404 em toda visita.</p>
+  <p class="fix"><b>Como resolver:</b> criar o <code>index.css</code> (e usá-lo como entrada do Tailwind no build) ou remover o link. Resolve junto com a migração do Tailwind.</p>
+</div>
+
+<div class="finding med">
+  <h4><span class="tag t-med">médio</span> 5 erros de type-check (<code>import.meta.env</code> sem tipagem)</h4>
+  <p><code>npx tsc --noEmit</code> retorna 5 erros do tipo <i>"Property 'env' does not exist on type 'ImportMeta'"</i> em <code>geminiService.ts</code>, <code>useWakeLock.ts</code> e <code>supabaseClient.ts</code>. O build passa (Vite usa esbuild, que ignora tipos), mas o projeto não está "type-clean".</p>
+  <p class="fix"><b>Como resolver:</b> adicionar <code>"vite/client"</code> ao <code>types</code> do <code>tsconfig.json</code> (ou criar um <code>vite-env.d.ts</code>). Correção de 1 linha.</p>
+</div>
+
+<div class="finding med">
+  <h4><span class="tag t-med">médio</span> Dois sistemas de histórico divergentes</h4>
+  <p>O <code>AppContext</code> salva o histórico dentro da chave <code>bible_crentech_data</code>. Mas existe um <code>services/HistoryService.ts</code> usando outra chave (<code>bible_crentech_history</code>) que <b>não é importado em lugar nenhum</b> (órfão). Quando você for fazer a tela de Histórico, é fácil cair na fonte errada.</p>
+  <p class="fix"><b>Como resolver:</b> decidir uma única fonte de verdade (recomendo a do <code>AppContext</code>) e apagar ou reescrever o <code>HistoryService</code> em cima dela.</p>
+</div>
+
+<div class="finding med">
+  <h4><span class="tag t-med">médio</span> Código morto: <code>supabaseClient.ts</code> e <code>pixGenerator.ts</code></h4>
+  <p>Ambos existem mas <b>nenhum outro arquivo os importa</b>. O Supabase está conectado (chaves no <code>.env</code>) porém ocioso. Isso aumenta o bundle e confunde quem lê o código.</p>
+  <p class="fix"><b>Como resolver:</b> remover por enquanto (dá pra recuperar do git quando for usar), OU manter só se houver plano concreto de usar Supabase já na retomada.</p>
+</div>
+
+<div class="finding med">
+  <h4><span class="tag t-med">médio</span> Padrões de variáveis de ambiente misturados</h4>
+  <p>Convivem <code>process.env.API_KEY</code> (injetado via <code>define</code>) e <code>import.meta.env.VITE_*</code>. Dois jeitos de fazer a mesma coisa dificultam manutenção e foram parte da causa dos erros de tipo.</p>
+  <p class="fix"><b>Como resolver:</b> padronizar tudo em <code>import.meta.env.VITE_*</code> (padrão nativo do Vite).</p>
+</div>
+
+<div class="finding low">
+  <h4><span class="tag t-low">baixo</span> Bundle único de 523 kB sem code-splitting</h4>
+  <p>O Vite avisa que o chunk passou de 500 kB. Não é grave (132 kB gzip), mas dá pra melhorar o tempo de primeira carga.</p>
+  <p class="fix"><b>Como resolver:</b> <code>import()</code> dinâmico nas telas mais pesadas (Reader, Search) e/ou <code>manualChunks</code>.</p>
+</div>
+
+<div class="finding low">
+  <h4><span class="tag t-low">baixo</span> Acessibilidade: zoom bloqueado</h4>
+  <p>O viewport usa <code>maximum-scale=1.0, user-scalable=no</code>, impedindo o usuário de dar zoom — ruim para acessibilidade, especialmente num app de <b>leitura</b> usado por pessoas mais velhas.</p>
+  <p class="fix"><b>Como resolver:</b> remover <code>user-scalable=no</code> e <code>maximum-scale</code>.</p>
+</div>
+
+<div class="finding low">
+  <h4><span class="tag t-low">baixo</span> 26 <code>console.*</code> espalhados + sem lint/CI/testes</h4>
+  <p>São 26 chamadas de <code>console</code> que vão para produção. Não há ESLint/Prettier configurado, nem testes (o <code>test_crc.cjs</code> na raiz é um script solto). Para um projeto que você quer manter, vale uma base mínima de qualidade.</p>
+  <p class="fix"><b>Como resolver:</b> ESLint + Prettier, limpar logs de debug, e (opcional) um teste de fumaça em <code>useBible</code>/parser de referências.</p>
+</div>
+
+<!-- ESTADO DAS FUNCIONALIDADES -->
+<h2><span class="ico">🧭</span>Estado das Funcionalidades</h2>
+<table>
+  <tr><th>Área</th><th>Status</th><th>Observação</th></tr>
+  <tr><td>Home (versículo do dia, atalhos)</td><td class="ok">Funciona</td><td>Cache local do versículo do dia</td></tr>
+  <tr><td>Busca por texto / referência</td><td class="ok">Funciona</td><td>Local primeiro, IA depois; regex flexível</td></tr>
+  <tr><td>Busca por voz (IA)</td><td class="ok">Funciona</td><td>Depende da chave Gemini</td></tr>
+  <tr><td>Leitor (livro/capítulo)</td><td class="ok">Funciona</td><td>Scroll p/ versículo, destaque, favoritar</td></tr>
+  <tr><td>Favoritos</td><td class="ok">Funciona</td><td>Só no Leitor; falta na Busca IA</td></tr>
+  <tr><td>Temas visuais (6)</td><td class="ok">Funciona</td><td>Kids/Católico/Pentecostal pedem capricho</td></tr>
+  <tr><td>Doação PIX</td><td class="ok">Funciona</td><td>Marcado por você como "perfeito"</td></tr>
+  <tr><td>Tela de Histórico</td><td class="wip">Em construção</td><td>Placeholder no <code>AppRouter</code>; dados já existem</td></tr>
+  <tr><td>Tela de Quiz</td><td class="wip">Em construção</td><td>Placeholder; tem design pronto em <code>stitch_designs/</code></td></tr>
+  <tr><td>Troca de versão (NVI, ARC…)</td><td class="wip">Parcial</td><td>Busca local sempre usa ACF mesmo trocando a versão</td></tr>
+  <tr><td>Funcionar offline</td><td class="no">Não</td><td>Sem Service Worker</td></tr>
+  <tr><td>Reset do histórico/localStorage</td><td class="no">Não</td><td>Pedido antigo seu; acumula sem botão de limpar</td></tr>
+</table>
+
+<!-- PENDENCIAS UX ANTIGAS -->
+<h2><span class="ico">📝</span>Pendências de UX que você já tinha anotado</h2>
+<p class="muted">Do <code>FEATURES_APROVADAS.md</code> (nov/2024). Como são anteriores à refatoração, conferir uma a uma — parte pode já ter mudado:</p>
+<ul class="clean">
+  <li><b>Som/música:</b> controle de som "péssimo", música "horrível", sons "estilo Atari". Quer som suave no hover (hoje não tem) e sons que "signifiquem algo".</li>
+  <li><b>Splash screen</b> precisava melhorar.</li>
+  <li><b>Modal "Sobre"</b>: tornar interativo, com animação, sem despejar tudo de uma vez.</li>
+  <li><b>Modal "Temas"</b>: adicionar animação/interatividade e <b>mais temas</b>.</li>
+  <li><b>Temas Kids / Católico / Pentecostal</b>: aprofundar identidade visual de cada um.</li>
+  <li><b>Botão de Reset</b> do localStorage (limpar histórico acumulado).</li>
+  <li><b>Responsividade</b>: você notou que "às vezes some coisa" dependendo da versão — investigar.</li>
+</ul>
+
+<!-- ROADMAP -->
+<h2><span class="ico">🚀</span>Sugestão de Roadmap (por onde ir)</h2>
+
+<div class="road r1">
+  <div class="head">FASE 1 — Estabilizar a base (1 a 2 sessões) · esforço baixo, impacto alto</div>
+  <div class="body">
+    <ul class="clean">
+      <li>Corrigir o modelo Gemini default (parar de usar o "preview") e validar a IA funcionando.</li>
+      <li>Proteger a chave Gemini (restrição por domínio + cota agora; backend depois).</li>
+      <li>Corrigir os 5 erros de type-check (<code>vite/client</code>).</li>
+      <li>Limpar código morto (Supabase, pixGenerator, HistoryService órfão) e padronizar env.</li>
+      <li>Liberar o zoom (acessibilidade) — 1 linha.</li>
+    </ul>
+    <p class="muted" style="margin:8px 0 0;font-size:13px">Resultado: app confiável e sem armadilhas escondidas para construir por cima.</p>
+  </div>
+</div>
+
+<div class="road r2">
+  <div class="head">FASE 2 — Fechar o que está aberto (o "Em Construção") · impacto direto no usuário</div>
+  <div class="body">
+    <ul class="clean">
+      <li><b>Tela de Histórico</b> — os dados já existem; é "só" a UI. Tira um "Em Construção" da frente do usuário. <b>Melhor primeiro passo visível.</b></li>
+      <li><b>Botão de Reset</b> do histórico (pedido antigo, encaixa aqui).</li>
+      <li><b>Favoritos na Busca IA</b> (estrela nos resultados).</li>
+      <li><b>Tela de Quiz</b> — já existe design em <code>stitch_designs/quiz_screen</code>; ótima feature de engajamento.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="road r3">
+  <div class="head">FASE 3 — Elevar a qualidade percebida (premium) · médio prazo</div>
+  <div class="body">
+    <ul class="clean">
+      <li><b>PWA offline real</b> (Service Worker) — entrega a promessa de "Bíblia offline".</li>
+      <li><b>Tailwind no build</b> (sai do CDN) — mais rápido e profissional.</li>
+      <li><b>Reformular o áudio</b> (sons suaves, com propósito) — seu incômodo recorrente.</li>
+      <li><b>Polir modais e temas</b> (Sobre, Temas, Kids/Católico/Pentecostal).</li>
+      <li><b>Ideias de IA de alto impacto</b>: Devocional personalizado ("como você está hoje?"), Cards de versículo para redes sociais, Léxico de Strong, Planos de leitura.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- POR ONDE COMECAR -->
+<h2><span class="ico">🎯</span>Minha recomendação de "primeiro dia"</h2>
+<div class="start">
+  <p>Se for retomar nesta semana, sugiro esta ordem — começa seguro e já entrega algo visível:</p>
+  <ol>
+    <li><b>Confirmar que a IA ainda responde</b> (rodar <code>npm run dev</code> e testar uma busca por voz). Se falhar, é o modelo "preview" — corrigir o default.</li>
+    <li><b>Fase 1 inteira</b> num único pente fino (são correções rápidas e de baixo risco).</li>
+    <li><b>Construir a Tela de Histórico</b> — primeiro "Em Construção" a virar realidade, sem precisar de IA nem dados novos.</li>
+  </ol>
+  <p class="muted" style="margin-bottom:0">Quando você voltar e validar este relatório, eu já começo pela Fase 1 commitando item por item (atômico), pra você poder reverter qualquer coisa isolada se quiser.</p>
+</div>
+
+<footer>
+  Relatório gerado por Claude Code · 26/06/2026 · Bíblia CrenTech (versão legado, branch <code>main</code>)<br>
+  Baseado em auditoria do código-fonte, build de produção, type-check e nos documentos do projeto.
+</footer>
+
+</div>
+</body>
+</html>
