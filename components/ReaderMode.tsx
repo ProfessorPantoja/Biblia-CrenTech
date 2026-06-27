@@ -37,11 +37,12 @@ const ReaderMode: React.FC = () => {
             try {
                 const query = `${currentBook.name} ${currentChapter}`;
                 const verses = await getVerses(query);
-                if (verses) {
-                    setChapterContent(verses);
-                }
+                // Sempre refletir o resultado: se falhou (null), limpa o conteúdo
+                // para não mostrar o capítulo anterior sob o cabeçalho novo.
+                setChapterContent(verses ?? []);
             } catch (error) {
                 console.error("Failed to fetch chapter", error);
+                setChapterContent([]);
             } finally {
                 setIsLoading(false);
             }
@@ -327,6 +328,15 @@ const ReaderMode: React.FC = () => {
                     <div className="flex flex-col items-center justify-center h-64 space-y-4">
                         <div className="w-12 h-12 border-4 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
                         <p className="opacity-50 animate-pulse">Carregando palavra...</p>
+                    </div>
+                ) : chapterContent.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-64 space-y-3 text-center max-w-md mx-auto">
+                        <p className={`font-semibold ${currentTheme.textClass}`}>
+                            Não foi possível carregar {currentBook.name} {currentChapter}.
+                        </p>
+                        <p className="opacity-60 text-sm">
+                            Se você estiver offline, este capítulo ainda não foi baixado. Conecte-se à internet e abra-o uma vez para que fique disponível offline depois.
+                        </p>
                     </div>
                 ) : (
                     <div className="font-serif leading-loose space-y-6 max-w-2xl mx-auto" style={{ fontSize: `${fontSize}px` }}>

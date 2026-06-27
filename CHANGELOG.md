@@ -8,6 +8,18 @@
 > Contexto: retomada após o projeto ficar parado desde nov/2025. Antes das
 > mudanças foi feita uma auditoria técnica (ver `docs/RELATORIO_RETOMADA_2026-06-26.html`).
 
+### 🐛 4. Correção: leitor mostrava capítulo errado ao falhar o carregamento
+
+**Sintoma**: ao abrir um livro não cacheado estando offline (ex.: "1 Coríntios"),
+o cabeçalho atualizava mas o texto continuava o do capítulo anterior (Gênesis).
+
+**Causa**: no `ReaderMode`, quando `getVerses` falhava (retornava null), o
+conteúdo anterior não era limpo.
+
+**Correção** (`components/ReaderMode.tsx`):
+- ✅ Sempre reflete o resultado (`setChapterContent(verses ?? [])`)
+- ✅ Mensagem clara quando o capítulo não carrega (com dica sobre offline)
+
 ### 🔄 1. Migração da IA: Gemini → Groq
 
 **Motivo**: troca de provedor de IA.
