@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheat Sheet — OAuth com Google (reutilizável)</title>
+<style>
+  :root{--bg:#0e1116;--card:#171c24;--card2:#1f2630;--line:#2a323d;--txt:#e7edf3;--muted:#9aa7b4;--gold:#d4af37;--accent:#3b82f6;--green:#22c55e;--red:#ef4444;--orange:#f59e0b}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;line-height:1.6}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px}
+  header.hero{background:linear-gradient(135deg,#1f2630,#0e1116);border:1px solid var(--line);border-radius:16px;padding:28px 26px;margin-bottom:26px}
+  header.hero h1{margin:0 0 6px;font-size:27px}
+  .muted{color:var(--muted)}
+  h2{font-size:20px;margin:34px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h2 .ico{margin-right:8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:12px 0}
+  code{background:#0b0f14;border:1px solid var(--line);border-radius:5px;padding:2px 7px;font-size:13px;color:#ffd9a8;font-family:"SF Mono",Consolas,monospace;word-break:break-all}
+  ol,ul{margin:8px 0;padding-left:22px}
+  li{margin:7px 0}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  .glo{display:grid;grid-template-columns:170px 1fr;gap:4px 16px;margin:6px 0}
+  .glo dt{font-weight:700;color:#9cc3ff}
+  .glo dd{margin:0;color:#cdd6e0}
+  .warn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);border-radius:10px;padding:12px 16px;margin:12px 0;font-size:14px}
+  .ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.4);border-radius:10px;padding:12px 16px;margin:12px 0;font-size:14px}
+  .gold{background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.45);border-radius:10px;padding:14px 16px;margin:12px 0;font-size:14px}
+  .num{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;align-items:center;justify-content:center;font-size:14px;margin-right:8px}
+  .step{display:flex;gap:6px;align-items:baseline}
+  .tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:.4px}
+  .t-g{background:rgba(34,197,94,.18);color:#9ff0bd}
+  .t-b{background:rgba(59,130,246,.18);color:#b3d1ff}
+  pre{background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;font-size:13px;color:#cfe3ff}
+  .err{color:#ff9d9d;font-weight:700;font-family:"SF Mono",Consolas,monospace;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>🔑 Cheat Sheet — Login com Google (OAuth)</h1>
+  <div class="muted">Receita reutilizável pra qualquer app. Serve com Supabase, Firebase, Auth0 ou backend próprio.<br>O fluxo é sempre o mesmo: <b>Google emite a identidade → seu "porteiro" (provedor/backend) recebe e cria a sessão.</b></div>
+</header>
+
+<div class="gold">
+  <b>💡 A sacada do limite de projetos:</b> você <b>não</b> precisa de 1 projeto Google Cloud por app.
+  Um único projeto pode ter <b>vários Client IDs</b> (um por aplicação). Só crie projetos separados quando quiser
+  uma <b>tela de consentimento com nome/marca diferente</b> por app. Assim o limite (~12 projetos) raramente incomoda.
+</div>
+
+<!-- GLOSSARIO -->
+<h2><span class="ico">📚</span>As peças (decore isto e o resto flui)</h2>
+<div class="card">
+  <dl class="glo">
+    <dt>Projeto (Google Cloud)</dt><dd>O "guarda-chuva". Contém a tela de consentimento e os clientes OAuth.</dd>
+    <dt>Tela de consentimento</dt><dd>O que o usuário vê ("App X quer acessar sua conta"). É <b>por projeto</b>.</dd>
+    <dt>Client ID</dt><dd>Identificador <b>público</b> do app. Pode aparecer no front-end, sem problema.</dd>
+    <dt>Client Secret</dt><dd>Senha <b>secreta</b> do app. <b>NUNCA</b> no front-end/git. Só no servidor/provedor.</dd>
+    <dt>JavaScript Origins</dt><dd>De quais <b>domínios</b> o navegador pode iniciar o login (ex: <code>http://localhost:3000</code>).</dd>
+    <dt>Redirect URI</dt><dd>Pra onde o Google <b>devolve</b> o usuário após autenticar. Tem que bater <b>exatamente</b>.</dd>
+    <dt>Scopes</dt><dd>O que você pede (email, perfil...). Pra login simples, o básico já vem.</dd>
+    <dt>Test users</dt><dd>Enquanto o app está "em teste", só e-mails nesta lista conseguem logar.</dd>
+  </dl>
+</div>
+
+<!-- RECEITA -->
+<h2><span class="ico">🧭</span>A receita (sempre os mesmos passos)</h2>
+
+<div class="card">
+  <p><span class="tag t-g">no Google Cloud</span></p>
+  <div class="step"><span class="num">1</span><div><b>Projeto:</b> crie um novo ou reutilize um existente (lembre da sacada acima).</div></div>
+  <div class="step"><span class="num">2</span><div><b>Tela de consentimento:</b> tipo <b>Externo</b>, preencha nome do app + e-mails. Adicione seu e-mail em <b>Test users</b>.</div></div>
+  <div class="step"><span class="num">3</span><div><b>Credenciais → ID do cliente OAuth → Aplicativo da Web.</b></div></div>
+  <div class="step"><span class="num">4</span><div><b>JavaScript Origins:</b> os domínios do app (dev + produção). <u>Sem</u> caminho, <u>sem</u> barra final.<br><code>http://localhost:3000</code> &nbsp; <code>https://meuapp.com</code></div></div>
+  <div class="step"><span class="num">5</span><div><b>Redirect URIs:</b> o endereço de <b>callback</b> (veja a regra de ouro abaixo). Tem que ser exato.</div></div>
+  <div class="step"><span class="num">6</span><div><b>Criar</b> → copie <b>Client ID</b> e <b>Client Secret</b>.</div></div>
+  <p style="margin-top:14px"><span class="tag t-b">no seu provedor (Supabase/Firebase/Auth0/backend)</span></p>
+  <div class="step"><span class="num">7</span><div><b>Ative o provedor Google</b> e cole o <b>Client ID + Secret</b>. Configure as <b>URLs de retorno</b> permitidas (Site URL + Redirect URLs). Salve.</div></div>
+</div>
+
+<!-- REGRA DE OURO -->
+<h2><span class="ico">⭐</span>Regra de ouro do Redirect URI</h2>
+<div class="card">
+  <p>É o que <b>mais quebra</b>. O Redirect URI no Google tem que ser o callback de <b>quem recebe o login</b> — e isso muda conforme a arquitetura:</p>
+  <table>
+    <tr><th>Você usa...</th><th>Redirect URI no Google é...</th></tr>
+    <tr><td><b>Supabase</b></td><td><code>https://SEU-PROJETO.supabase.co/auth/v1/callback</code></td></tr>
+    <tr><td><b>Firebase</b></td><td><code>https://SEU-APP.firebaseapp.com/__/auth/handler</code></td></tr>
+    <tr><td><b>Auth0</b></td><td><code>https://SEU-TENANT.auth0.com/login/callback</code></td></tr>
+    <tr><td><b>Backend próprio</b></td><td><code>https://seuapp.com/auth/google/callback</code> (a rota que VOCÊ criar)</td></tr>
+  </table>
+  <div class="warn">⚠️ Erros clássicos: barra <code>/</code> a mais no final, <code>http</code> em vez de <code>https</code>, ou usar o domínio do <b>app</b> quando deveria ser o do <b>provedor</b>. 1 caractere errado = login falha.</div>
+</div>
+
+<!-- TESTE VS PUBLICADO -->
+<h2><span class="ico">🚦</span>Modo Teste vs Publicado</h2>
+<div class="card">
+  <ul>
+    <li><b>Em teste (Testing):</b> só os e-mails da lista <b>Test users</b> conseguem logar. Aparece um aviso "app não verificado" → é normal, clica em "Avançar/Continuar".</li>
+    <li><b>Publicado (In production):</b> qualquer pessoa loga. Pra liberar geral, vá na tela de consentimento e clique em <b>"Publicar app"</b>.</li>
+    <li><b>Verificação do Google:</b> só é exigida se você pedir scopes "sensíveis" (Gmail, Drive, etc). Pra login básico (email/perfil), <b>não precisa</b> de verificação.</li>
+  </ul>
+</div>
+
+<!-- ERROS -->
+<h2><span class="ico">🩺</span>Tabela de erros (decora que vira diagnóstico instantâneo)</h2>
+<div class="card">
+  <table>
+    <tr><th>Erro</th><th>Significa</th><th>Conserto</th></tr>
+    <tr><td class="err">redirect_uri_mismatch</td><td>O Redirect URI não bate com o cadastrado.</td><td>Compare caractere a caractere no Google (https, sem barra final, domínio do provedor).</td></tr>
+    <tr><td class="err">invalid_client</td><td>Client ID ou Secret errado.</td><td>Recopie do Google e cole no provedor.</td></tr>
+    <tr><td class="err">provider is not enabled</td><td>O provedor Google não foi ativado.</td><td>Ligue o toggle do Google no provedor e <b>salve</b>.</td></tr>
+    <tr><td class="err">access_blocked / not a test user</td><td>App em teste e seu e-mail não está na lista.</td><td>Adicione o e-mail em Test users (ou publique o app).</td></tr>
+    <tr><td class="err">origin_mismatch</td><td>O domínio do app não está nas JavaScript Origins.</td><td>Adicione o domínio exato (com porta, se houver).</td></tr>
+  </table>
+</div>
+
+<!-- SEGURANCA -->
+<h2><span class="ico">🔒</span>Segurança (a regra que nunca muda)</h2>
+<div class="card">
+  <ul>
+    <li><b>Client Secret</b> = só no servidor/provedor. Nunca no front-end, nunca no git.</li>
+    <li>Se um secret vazar (ex: apareceu num print), <b>revogue e gere outro</b> — leva segundos.</li>
+    <li>Chaves "públicas" (Client ID, anon/publishable key) podem ficar no front — a proteção real é o <b>RLS / regras do provedor</b>.</li>
+    <li>Em produção, cadastre as variáveis no painel do deploy (ex: Vercel → Environment Variables), não no código.</li>
+  </ul>
+</div>
+
+<div class="ok">
+  <b>Resumo de bolso:</b> 1) projeto → 2) consent screen + test users → 3) client web → 4) origins (domínios) →
+  5) redirect URI (callback do provedor) → 6) copia ID+Secret → 7) cola no provedor e ativa. Erro? Olha a tabela. 🚀
+</div>
+
+<footer style="margin-top:40px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px">
+  Cheat Sheet OAuth Google · material de referência reutilizável · gerado por Claude Code · 26/06/2026
+</footer>
+
+</div>
+</body>
+</html>
