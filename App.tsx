@@ -3,6 +3,7 @@ import { SoundEngine } from './utils/soundEngine';
 import { useWakeLock } from './hooks/useWakeLock';
 
 // Contexts
+import { AuthProvider } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 import { NavigationProvider, useNavigation } from './contexts/NavigationContext';
 
@@ -47,11 +48,13 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AppProvider>
-      <NavigationProvider>
-        <AppContent />
-      </NavigationProvider>
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <NavigationProvider>
+          <AppContent />
+        </NavigationProvider>
+      </AppProvider>
+    </AuthProvider>
   );
 };
 

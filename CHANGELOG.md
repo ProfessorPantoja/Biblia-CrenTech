@@ -8,6 +8,21 @@
 > Contexto: retomada após o projeto ficar parado desde nov/2025. Antes das
 > mudanças foi feita uma auditoria técnica (ver `docs/RELATORIO_RETOMADA_2026-06-26.html`).
 
+### 🔐 6. Login com Google (Fase 2 de 3 — autenticação)
+
+> Decisão: Supabase Auth + Google, login **opcional** (app funciona sem conta).
+
+- ✅ `contexts/AuthContext.tsx` (sessão, signInWithGoogle, signOut)
+- ✅ `components/modals/AuthModal.tsx` (entrar / ver perfil / sair)
+- ✅ Avatar da Home virou botão de login; mostra foto e nome quando logado
+- ✅ `AuthProvider` no topo da árvore de contextos
+- ✅ Guia de configuração: `docs/GUIA_LOGIN_GOOGLE.html`
+
+**Pendente**:
+- Fase 1 (config do usuário): credenciais OAuth no Google + provider no Supabase
+  + SQL da tabela `user_data` (ver o guia).
+- Fase 3 (código): sincronizar favoritos/histórico/preferências/última leitura.
+
 ### 💸 5. Voz: Whisper turbo (mais barato)
 
 - ✅ Default da transcrição mudou para `whisper-large-v3-turbo` (multilíngue,

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia: Login com Google (Supabase) — Bíblia CrenTech</title>
+<style>
+  :root{--bg:#0e1116;--card:#171c24;--line:#2a323d;--txt:#e7edf3;--muted:#9aa7b4;--gold:#d4af37;--accent:#3b82f6;--green:#22c55e;--red:#ef4444}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;line-height:1.6}
+  .wrap{max-width:920px;margin:0 auto;padding:32px 20px 80px}
+  header.hero{background:linear-gradient(135deg,#1f2630,#0e1116);border:1px solid var(--line);border-radius:16px;padding:28px 26px;margin-bottom:26px}
+  header.hero h1{margin:0 0 6px;font-size:26px}
+  .muted{color:var(--muted)}
+  h2{font-size:20px;margin:34px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .step h3{margin:0 0 10px;font-size:16px;display:flex;align-items:center;gap:10px}
+  .num{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto}
+  ol,ul{margin:8px 0;padding-left:22px}
+  li{margin:6px 0}
+  code{background:#0b0f14;border:1px solid var(--line);border-radius:5px;padding:2px 7px;font-size:13px;color:#ffd9a8;font-family:"SF Mono",Consolas,monospace;word-break:break-all}
+  .copy{background:#0b0f14;border:1px dashed var(--accent);border-radius:8px;padding:10px 12px;margin:8px 0;font-family:"SF Mono",Consolas,monospace;font-size:13px;color:#9cc3ff;word-break:break-all}
+  .label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:block;margin-bottom:2px}
+  pre{background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:14px;overflow:auto;font-size:13px;color:#cfe3ff}
+  .warn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.4);border-radius:10px;padding:12px 16px;margin:12px 0;font-size:14px}
+  .ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.4);border-radius:10px;padding:12px 16px;margin:12px 0;font-size:14px}
+  a{color:#9cc3ff}
+  .pill{display:inline-block;background:rgba(212,175,55,.15);color:#f0d8a0;border:1px solid rgba(212,175,55,.4);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>🔑 Guia: Login com Google</h1>
+  <div class="muted">Configuração que <b>você</b> precisa fazer (uma vez) para o login funcionar. ~15–20 min.<br>
+  Projeto Supabase: <code>gusysdjcmdzfqaaehdkr</code> · Abordagem: Supabase Auth + Google</div>
+</header>
+
+<div class="ok">
+  <b>Como funciona:</b> o Google cuida da identidade, e o <b>Supabase</b> fica no meio gerenciando a sessão e guardando os dados.
+  Você vai (1) criar uma credencial no Google, (2) colar essa credencial no Supabase, e (3) rodar um trecho de SQL. Só isso.
+</div>
+
+<h2>Parte 1 — Google Cloud (criar a credencial OAuth)</h2>
+
+<div class="step">
+  <h3><span class="num">1</span> Criar/abrir um projeto</h3>
+  <ol>
+    <li>Acesse <a href="https://console.cloud.google.com/" target="_blank">console.cloud.google.com</a> com sua conta Google.</li>
+    <li>No topo, crie um projeto novo (ex.: <code>biblia-crentech</code>) ou use um existente.</li>
+  </ol>
+</div>
+
+<div class="step">
+  <h3><span class="num">2</span> Tela de consentimento (OAuth consent screen)</h3>
+  <ol>
+    <li>Menu → <b>APIs e Serviços → Tela de consentimento OAuth</b>.</li>
+    <li>Tipo de usuário: <b>Externo</b> → Criar.</li>
+    <li>Preencha o básico: nome do app (<code>Bíblia CrenTech</code>), e-mail de suporte (o seu) e e-mail de contato do desenvolvedor (o seu). Salve.</li>
+    <li>Em <b>Usuários de teste</b>, adicione o seu próprio e-mail (enquanto o app estiver "em teste", só e-mails listados conseguem logar — depois você publica).</li>
+  </ol>
+</div>
+
+<div class="step">
+  <h3><span class="num">3</span> Criar as credenciais (Client ID)</h3>
+  <ol>
+    <li>Menu → <b>APIs e Serviços → Credenciais → Criar credenciais → ID do cliente OAuth</b>.</li>
+    <li>Tipo de aplicativo: <b>Aplicativo da Web</b>.</li>
+    <li>Em <b>Origens JavaScript autorizadas</b>, adicione:
+      <div class="copy">http://localhost:3000</div>
+      <div class="copy">https://biblia-crentech.vercel.app</div>
+    </li>
+    <li>Em <b>URIs de redirecionamento autorizados</b>, adicione <span class="pill">o callback do Supabase</span>:
+      <div class="copy">https://gusysdjcmdzfqaaehdkr.supabase.co/auth/v1/callback</div>
+    </li>
+    <li>Clique em <b>Criar</b>. O Google vai mostrar um <b>Client ID</b> e um <b>Client Secret</b> — <b>copie os dois</b> (vamos usar na Parte 2).</li>
+  </ol>
+  <div class="warn">⚠️ Guarde o <b>Client Secret</b> com cuidado e não coloque no código/git. Ele vai só dentro do Supabase.</div>
+</div>
+
+<h2>Parte 2 — Supabase (ativar o provedor Google)</h2>
+
+<div class="step">
+  <h3><span class="num">4</span> Ligar o Google no Supabase</h3>
+  <ol>
+    <li>Acesse <a href="https://supabase.com/dashboard/project/gusysdjcmdzfqaaehdkr/auth/providers" target="_blank">o painel do seu projeto → Authentication → Providers</a>.</li>
+    <li>Encontre <b>Google</b> e ative (Enable).</li>
+    <li>Cole o <b>Client ID</b> e o <b>Client Secret</b> que você copiou do Google. Salve.</li>
+  </ol>
+</div>
+
+<div class="step">
+  <h3><span class="num">5</span> Liberar os endereços de retorno</h3>
+  <ol>
+    <li>Vá em <b>Authentication → URL Configuration</b>.</li>
+    <li>Em <b>Site URL</b>, coloque: <div class="copy">https://biblia-crentech.vercel.app</div></li>
+    <li>Em <b>Redirect URLs</b>, adicione também o ambiente local: <div class="copy">http://localhost:3000</div></li>
+    <li>Salve.</li>
+  </ol>
+</div>
+
+<h2>Parte 3 — Banco de dados (para a sincronização)</h2>
+
+<div class="step">
+  <h3><span class="num">6</span> Criar a tabela de dados do usuário</h3>
+  <ol>
+    <li>No painel do Supabase, vá em <b>SQL Editor → New query</b>.</li>
+    <li>Cole o SQL abaixo e clique em <b>Run</b>. Ele cria a tabela e a segurança (cada pessoa só acessa os próprios dados).</li>
+  </ol>
+<pre>-- Tabela com os dados sincronizados de cada usuário
+create table if not exists public.user_data (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  data jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+-- Liga a segurança por linha (RLS)
+alter table public.user_data enable row level security;
+
+-- Cada usuário só pode ler/gravar a PRÓPRIA linha
+create policy "own_data_select" on public.user_data
+  for select using (auth.uid() = user_id);
+create policy "own_data_insert" on public.user_data
+  for insert with check (auth.uid() = user_id);
+create policy "own_data_update" on public.user_data
+  for update using (auth.uid() = user_id);</pre>
+  <div class="ok">✅ Pronto. Quando terminar as 3 partes, me avise que eu finalizo o código de sincronização e a gente testa o login de ponta a ponta.</div>
+</div>
+
+<h2>Resumo do que copiar onde</h2>
+<div class="step">
+  <ul>
+    <li><span class="label">Vai no Google (URIs de redirecionamento)</span> <code>https://gusysdjcmdzfqaaehdkr.supabase.co/auth/v1/callback</code></li>
+    <li><span class="label">Vai no Google (Origens JavaScript)</span> <code>http://localhost:3000</code> e <code>https://biblia-crentech.vercel.app</code></li>
+    <li><span class="label">Vai no Supabase (Providers → Google)</span> Client ID + Client Secret do Google</li>
+    <li><span class="label">Vai no Supabase (URL Configuration)</span> Site URL + Redirect URLs</li>
+    <li><span class="label">Vai no Supabase (SQL Editor)</span> o bloco SQL da tabela <code>user_data</code></li>
+  </ul>
+</div>
+
+<footer style="margin-top:40px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:18px">
+  Guia gerado por Claude Code · Bíblia CrenTech · 26/06/2026
+</footer>
+
+</div>
+</body>
+</html>

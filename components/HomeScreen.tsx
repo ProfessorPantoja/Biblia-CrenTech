@@ -3,7 +3,9 @@ import { AppTheme } from '../types';
 import { THEMES } from '../config/constants';
 import { Mic, BookOpen, History, Gamepad2, Share2, ChevronRight, Download, Palette } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useNavigation } from '../contexts/NavigationContext';
+import AuthModal from './modals/AuthModal';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { useBible } from '../hooks/useBible';
 import { FEATURED_VERSES } from '../data/featuredVerses';
@@ -21,7 +23,11 @@ const HomeScreen: React.FC = () => {
     const { navigate } = useNavigation();
     const { isInstallable, install: installPWA } = usePWAInstall();
     const { getVerses } = useBible();
-    const userName = "Visitante";
+    const { user } = useAuth();
+
+    const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || 'Visitante';
+    const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+    const [showAuthModal, setShowAuthModal] = React.useState(false);
 
     const currentTheme = THEMES[appTheme];
 
@@ -220,7 +226,7 @@ const HomeScreen: React.FC = () => {
             <header className="flex justify-between items-center z-10 pt-4">
                 <div className="text-left">
                     <p className={`${currentTheme.textClass} opacity-60 text-base`}>Graça e Paz,</p>
-                    <h1 className={`${currentTheme.textClass} text-2xl font-bold`}>{userName}</h1>
+                    <h1 className={`${currentTheme.textClass} text-2xl font-bold`}>{displayName.split(' ')[0]}</h1>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -259,12 +265,19 @@ const HomeScreen: React.FC = () => {
                         <Share2 size={18} />
                     </button>
 
-                    <div className="w-12 h-12 rounded-full border-2 border-amber-400/80 p-0.5 shadow-lg shadow-amber-500/20 ml-1">
-                        {/* Placeholder Avatar - In real app could be user image */}
-                        <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-amber-400 font-bold text-lg">
-                            {userName.charAt(0)}
-                        </div>
-                    </div>
+                    <button
+                        onClick={() => setShowAuthModal(true)}
+                        title={user ? 'Sua conta' : 'Entrar com Google'}
+                        className="w-12 h-12 rounded-full border-2 border-amber-400/80 p-0.5 shadow-lg shadow-amber-500/20 ml-1 active:scale-95 transition-transform"
+                    >
+                        {avatarUrl ? (
+                            <img src={avatarUrl} alt={displayName} className="w-full h-full rounded-full object-cover" referrerPolicy="no-referrer" />
+                        ) : (
+                            <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-amber-400 font-bold text-lg">
+                                {displayName.charAt(0).toUpperCase()}
+                            </div>
+                        )}
+                    </button>
                 </div>
             </header>
 
@@ -438,6 +451,8 @@ const HomeScreen: React.FC = () => {
                     <p className={`text-right text-[10px] ${currentTheme.textClass} opacity-40`}>{lastReading ? 'Capítulo salvo' : 'Capítulo inicial'}</p>
                 </button>
             </footer>
+
+            {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
 
         </div>
     );
