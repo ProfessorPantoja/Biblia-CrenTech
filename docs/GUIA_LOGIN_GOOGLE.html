@@ -34,7 +34,7 @@
 <header class="hero">
   <h1>🔑 Guia: Login com Google</h1>
   <div class="muted">Configuração que <b>você</b> precisa fazer (uma vez) para o login funcionar. ~15–20 min.<br>
-  Projeto Supabase: <code>gusysdjcmdzfqaaehdkr</code> · Abordagem: Supabase Auth + Google</div>
+  Projeto Supabase: <code>hfnamocuqwxpiszxuasy</code> · Abordagem: Supabase Auth + Google</div>
 </header>
 
 <div class="ok">
@@ -72,7 +72,7 @@
       <div class="copy">https://biblia-crentech.vercel.app</div>
     </li>
     <li>Em <b>URIs de redirecionamento autorizados</b>, adicione <span class="pill">o callback do Supabase</span>:
-      <div class="copy">https://gusysdjcmdzfqaaehdkr.supabase.co/auth/v1/callback</div>
+      <div class="copy">https://hfnamocuqwxpiszxuasy.supabase.co/auth/v1/callback</div>
     </li>
     <li>Clique em <b>Criar</b>. O Google vai mostrar um <b>Client ID</b> e um <b>Client Secret</b> — <b>copie os dois</b> (vamos usar na Parte 2).</li>
   </ol>
@@ -84,7 +84,7 @@
 <div class="step">
   <h3><span class="num">4</span> Ligar o Google no Supabase</h3>
   <ol>
-    <li>Acesse <a href="https://supabase.com/dashboard/project/gusysdjcmdzfqaaehdkr/auth/providers" target="_blank">o painel do seu projeto → Authentication → Providers</a>.</li>
+    <li>Acesse <a href="https://supabase.com/dashboard/project/hfnamocuqwxpiszxuasy/auth/providers" target="_blank">o painel do seu projeto → Authentication → Providers</a>.</li>
     <li>Encontre <b>Google</b> e ative (Enable).</li>
     <li>Cole o <b>Client ID</b> e o <b>Client Secret</b> que você copiou do Google. Salve.</li>
   </ol>
@@ -131,7 +131,7 @@ create policy "own_data_update" on public.user_data
 <h2>Resumo do que copiar onde</h2>
 <div class="step">
   <ul>
-    <li><span class="label">Vai no Google (URIs de redirecionamento)</span> <code>https://gusysdjcmdzfqaaehdkr.supabase.co/auth/v1/callback</code></li>
+    <li><span class="label">Vai no Google (URIs de redirecionamento)</span> <code>https://hfnamocuqwxpiszxuasy.supabase.co/auth/v1/callback</code></li>
     <li><span class="label">Vai no Google (Origens JavaScript)</span> <code>http://localhost:3000</code> e <code>https://biblia-crentech.vercel.app</code></li>
     <li><span class="label">Vai no Supabase (Providers → Google)</span> Client ID + Client Secret do Google</li>
     <li><span class="label">Vai no Supabase (URL Configuration)</span> Site URL + Redirect URLs</li>
