@@ -4,7 +4,7 @@ import { ContextData, HermeneuticsData, VerseReference, BibleVersion } from "../
 const GROQ_BASE_URL = 'https://api.groq.com/openai/v1';
 const MODEL_NAME = import.meta.env.VITE_GROQ_MODEL || 'llama-3.3-70b-versatile';
 const FALLBACK_MODEL = import.meta.env.VITE_GROQ_MODEL_FALLBACK || 'llama-3.1-8b-instant';
-const WHISPER_MODEL = import.meta.env.VITE_GROQ_WHISPER_MODEL || 'whisper-large-v3';
+const WHISPER_MODEL = import.meta.env.VITE_GROQ_WHISPER_MODEL || 'whisper-large-v3-turbo';
 
 // Recupera a chave de forma segura, com erro claro quando ausente.
 const getApiKey = (): string => {

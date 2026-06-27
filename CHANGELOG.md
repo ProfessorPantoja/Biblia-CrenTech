@@ -8,6 +8,11 @@
 > Contexto: retomada após o projeto ficar parado desde nov/2025. Antes das
 > mudanças foi feita uma auditoria técnica (ver `docs/RELATORIO_RETOMADA_2026-06-26.html`).
 
+### 💸 5. Voz: Whisper turbo (mais barato)
+
+- ✅ Default da transcrição mudou para `whisper-large-v3-turbo` (multilíngue,
+  ~2-3x mais barato que o `large-v3`, ideal para economizar créditos)
+
 ### 🐛 4. Correção: leitor mostrava capítulo errado ao falhar o carregamento
 
 **Sintoma**: ao abrir um livro não cacheado estando offline (ex.: "1 Coríntios"),
