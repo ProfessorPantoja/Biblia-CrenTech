@@ -12,7 +12,7 @@ import SplashScreen from './components/SplashScreen';
 import AppRouter from './router/AppRouter';
 
 const AppContent: React.FC = () => {
-  const { currentView, navigate } = useNavigation();
+  const { currentView, finishSplash } = useNavigation();
   const [splashPhase, setSplashPhase] = useState(0); // 0: Start, 1: Pulse/Text, 2: Exit
 
   useWakeLock();
@@ -27,14 +27,14 @@ const AppContent: React.FC = () => {
       const timer = setTimeout(() => {
         setSplashPhase(2);
         setTimeout(() => {
-          navigate('home');
+          finishSplash(); // Respeita deep link (#/leitor/João/3) ou vai para a home
           SoundEngine.playSuccess();
         }, 100); // Short exit animation
       }, 100); // Minimal delay
 
       return () => clearTimeout(timer);
     }
-  }, [currentView, navigate]);
+  }, [currentView, finishSplash]);
 
   // --- RENDER ---
 

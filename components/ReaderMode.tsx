@@ -56,6 +56,12 @@ const ReaderMode: React.FC = () => {
         }
     }, [currentBook, currentChapter, getVerses, setLastReading]);
 
+    // Mantém o hash com a posição atual (#/leitor/Livro/Capítulo) para o
+    // link ser compartilhável; replaceState não cria entradas no histórico.
+    useEffect(() => {
+        window.history.replaceState(null, '', `#/leitor/${encodeURIComponent(currentBook.name)}/${currentChapter}`);
+    }, [currentBook, currentChapter]);
+
     // Check for navigation state from SearchMode
     const { readerState, setReaderState } = useApp();
 
