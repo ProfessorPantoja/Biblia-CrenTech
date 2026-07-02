@@ -3,6 +3,34 @@
 
 ---
 
+## 📅 Sessão: 02/07/2026 — parte 3 (checklist de integrações + testes automatizados)
+
+### ✅ 1. Checklist de integrações (verificado ao vivo, sem expor chaves)
+
+| Item | Resultado |
+|------|-----------|
+| Chave Groq (`.env.local`) | ✅ Válida — HTTP 200 no endpoint de modelos |
+| Supabase Auth | ✅ Provider **Google habilitado** (Fase 1 do login concluída) |
+| Busca IA ponta a ponta | ✅ Tema "Fé" → IA respondeu Romanos 1:17 renderizado no app |
+
+**Consequência**: a Fase 3 do login (sincronizar favoritos/histórico na nuvem)
+está desbloqueada — só falta a tabela `user_data` (SQL no guia) + o código.
+
+### 🧪 2. Testes automatizados (Vitest + Testing Library)
+
+- ✅ `npm test` — 33 testes em 6 arquivos, todos passando
+- ✅ `vitest.config.ts` separado (não carrega o plugin PWA nos testes)
+- ✅ **Regressão do bug do reload**: teste com StrictMode garante que os
+  dados salvos não são apagados ao montar o app (`tests/appContext.test.tsx`)
+- ✅ `parseReference`: 10 formatos de busca ("ap 11:4", "ap11.4", "sl 23",
+  intervalo "gn 1:1-3", livros de capítulo único etc.)
+- ✅ Rotas de URL: deep links, hash espelhado, botão voltar (hashchange)
+- ✅ Quiz: rodada completa com pontuação e recorde persistido
+- ✅ Histórico: listagem, remoção individual, limpar com confirmação
+- ✅ Banco do quiz: integridade dos dados (opções únicas, sem duplicatas)
+
+---
+
 ## 📅 Sessão: 02/07/2026 — parte 2 (trabalho autônomo autorizado, com push)
 
 > Escolhido o que não depende de configuração do usuário. Commits atômicos;
