@@ -3,6 +3,41 @@
 
 ---
 
+## 📅 Sessão: 02/07/2026 — parte 2 (trabalho autônomo autorizado, com push)
+
+> Escolhido o que não depende de configuração do usuário. Commits atômicos;
+> reverter um item isolado: `git revert <hash>`.
+
+### 🔗 1. Rotas de URL com hash (`626de43`)
+
+- ✅ A URL espelha a navegação: `#/home`, `#/busca`, `#/historico`, `#/quiz`
+- ✅ Leitor mantém a posição: `#/leitor/João/3` (link compartilhável)
+- ✅ Deep link com versículo: `#/leitor/João/3/16` abre destacado
+- ✅ **Botão voltar do navegador/Android agora funciona** (antes saía do app)
+
+### 🖼️ 2. Card de versículo em imagem (`42c31f7`)
+
+- ✅ PNG 1080x1920 (story) gerado no aparelho via canvas, sem dependências
+- ✅ Identidade do app: fundo escuro, serifa, dourado, marca no rodapé
+- ✅ Compartilhar (Web Share API com arquivo) ou Baixar
+- ✅ Entradas: ícone no Versículo do Dia (Home) e nas ações do resultado da Busca IA
+
+### 🎮 3. Quiz: 40 → 60 perguntas (`807bc33`)
+
+- ✅ +20 questões com referência bíblica, validadas por script
+  (4 opções únicas, sem duplicatas)
+
+### 🧰 4. Skill de projeto `run-app` (`2d98670`)
+
+- ✅ Receita para o Claude Code rodar e visualizar o app em sessões futuras
+  (não existe `chromium-cli` público; usamos playwright-core + Chromium do sistema)
+
+**Não feito por depender do usuário**: backend para a chave Groq (precisa de
+env var no painel da Vercel) e sincronização Supabase (precisa da Fase 1 do
+login). São os próximos da fila.
+
+---
+
 ## 📅 Sessão: 02/07/2026 (aprimoramentos — fim dos "Em Construção")
 
 > Todos os commits são atômicos e reversíveis individualmente com
