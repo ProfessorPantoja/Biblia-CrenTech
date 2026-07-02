@@ -10,6 +10,7 @@ import { usePWAInstall } from '../hooks/usePWAInstall';
 import { useBible } from '../hooks/useBible';
 import { FEATURED_VERSES } from '../data/featuredVerses';
 import { StorageService } from '../services/StorageService';
+import { BIBLE_BOOKS } from '../utils/bibleData';
 
 const FALLBACK_DAILY_VERSE = {
     text: 'O Senhor é o meu pastor; de nada terei falta.',
@@ -174,6 +175,14 @@ const HomeScreen: React.FC = () => {
             setShowInstallInstructions(true);
         }
     };
+
+    // Progresso do livro atual (capítulo lido / total de capítulos)
+    const readingProgress = React.useMemo(() => {
+        if (!lastReading) return null;
+        const book = BIBLE_BOOKS.find(b => b.name === lastReading.book);
+        if (!book || book.chapters === 0) return null;
+        return Math.round((lastReading.chapter / book.chapters) * 100);
+    }, [lastReading]);
 
     return (
         <div className={`min-h-screen w-full flex flex-col p-6 space-y-6 relative overflow-hidden ${currentTheme.bgClass} transition-colors duration-700`}>
@@ -446,9 +455,14 @@ const HomeScreen: React.FC = () => {
                     </div>
 
                     <div className="w-full bg-slate-700/50 rounded-full h-2 mb-2 overflow-hidden">
-                        <div className="bg-gradient-to-r from-amber-400 to-amber-600 h-full rounded-full w-full" />
+                        <div
+                            className="bg-gradient-to-r from-amber-400 to-amber-600 h-full rounded-full transition-all duration-700"
+                            style={{ width: `${Math.max(readingProgress ?? 0, 2)}%` }}
+                        />
                     </div>
-                    <p className={`text-right text-[10px] ${currentTheme.textClass} opacity-40`}>{lastReading ? 'Capítulo salvo' : 'Capítulo inicial'}</p>
+                    <p className={`text-right text-[10px] ${currentTheme.textClass} opacity-40`}>
+                        {readingProgress !== null ? `${readingProgress}% do livro` : 'Comece do início'}
+                    </p>
                 </button>
             </footer>
 
