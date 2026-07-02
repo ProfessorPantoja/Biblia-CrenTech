@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Melhorias — 02/07/2026 — Bíblia CrenTech</title>
+<style>
+    :root {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --card2: #16213a;
+        --gold: #fbbf24;
+        --gold-dark: #d97706;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --green: #4ade80;
+        --red: #f87171;
+        --blue: #60a5fa;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.65;
+        padding: 32px 16px 64px;
+    }
+    .wrap { max-width: 860px; margin: 0 auto; }
+    header.hero {
+        text-align: center;
+        padding: 36px 20px;
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border: 1px solid rgba(251, 191, 36, 0.35);
+        border-radius: 18px;
+        margin-bottom: 28px;
+    }
+    header.hero h1 { color: var(--gold); font-size: 1.7rem; margin-bottom: 6px; }
+    header.hero p { color: var(--muted); font-size: 0.95rem; }
+    .pill {
+        display: inline-block;
+        margin: 12px 4px 0;
+        padding: 4px 14px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: rgba(74, 222, 128, 0.12);
+        color: var(--green);
+        border: 1px solid rgba(74, 222, 128, 0.4);
+    }
+    .pill.warn { background: rgba(251,191,36,0.10); color: var(--gold); border-color: rgba(251,191,36,0.4); }
+    h2 {
+        color: var(--gold);
+        font-size: 1.2rem;
+        margin: 34px 0 14px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(251, 191, 36, 0.25);
+    }
+    .card {
+        background: var(--card);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+    }
+    .card h3 { font-size: 1.02rem; margin-bottom: 6px; }
+    .card p { font-size: 0.92rem; color: var(--muted); margin-bottom: 6px; }
+    .card p strong { color: var(--text); }
+    .tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 2px 10px;
+        border-radius: 999px;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+    .tag.fix { background: rgba(248,113,113,0.15); color: var(--red); }
+    .tag.feat { background: rgba(96,165,250,0.15); color: var(--blue); }
+    code {
+        background: #0b1120;
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 6px;
+        padding: 1px 7px;
+        font-size: 0.84em;
+        color: var(--gold);
+        font-family: 'Cascadia Code', Consolas, monospace;
+    }
+    .revert {
+        margin-top: 10px;
+        padding: 8px 12px;
+        background: var(--card2);
+        border-left: 3px solid var(--gold-dark);
+        border-radius: 0 8px 8px 0;
+        font-size: 0.83rem;
+        color: var(--muted);
+    }
+    ul.clean { list-style: none; }
+    ul.clean li { padding: 4px 0 4px 26px; position: relative; font-size: 0.92rem; }
+    ul.clean li::before { content: "✅"; position: absolute; left: 0; font-size: 0.85rem; }
+    ul.next li::before { content: "▸"; color: var(--gold); font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    th { color: var(--gold); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .footer { text-align: center; margin-top: 40px; color: var(--muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+    <header class="hero">
+        <h1>📖 Bíblia CrenTech — Relatório de Melhorias</h1>
+        <p>Sessão de 02/07/2026 · 6 commits atômicos e individualmente reversíveis</p>
+        <span class="pill">✔ Type-check e build de produção passando</span>
+        <span class="pill">✔ Cada mudança validada visualmente no navegador</span>
+        <span class="pill warn">⚠ Nada foi enviado (push) — teste primeiro</span>
+    </header>
+
+    <h2>🎯 Resumo executivo</h2>
+    <div class="card">
+        <p><strong>Os dois becos sem saída do app acabaram:</strong> os cartões <strong>Histórico</strong> e
+        <strong>Quiz</strong> da Home levavam a telas "Em Construção 🚧". Agora ambos funcionam de verdade.</p>
+        <p>De quebra, foi encontrado e corrigido um <strong>bug crítico de persistência</strong> que apagava
+        seus dados a cada recarregamento — era ele o culpado da barra de histórico "sumida"
+        (reclamação antiga registrada no FEATURES_APROVADAS).</p>
+    </div>
+
+    <h2>🐛 Bug crítico corrigido</h2>
+    <div class="card">
+        <h3><span class="tag fix">Fix</span>Dados apagados ao recarregar o app · <code>cc3a173</code></h3>
+        <p><strong>Sintoma:</strong> histórico, favoritos e última leitura se perdiam a cada reload.
+        A barra lateral de histórico parecia "desativada" por isso.</p>
+        <p><strong>Causa:</strong> o app carregava os dados salvos num <code>useEffect</code>, mas o efeito
+        que salva rodava antes, com o estado ainda vazio, e sobrescrevia o localStorage.</p>
+        <p><strong>Correção:</strong> os dados agora são lidos de forma síncrona na inicialização do estado —
+        a corrida deixou de existir. Verificado no navegador: dados sobrevivem ao reload.</p>
+        <div class="revert">Reverter só isto: <code>git revert cc3a173</code> (não recomendado — os dados voltam a sumir)</div>
+    </div>
+
+    <h2>✨ Novas funcionalidades</h2>
+
+    <div class="card">
+        <h3><span class="tag feat">Feat</span>Tela de Histórico real · <code>905c2c9</code></h3>
+        <ul class="clean">
+            <li>Lista os versículos buscados, mais recentes primeiro, com contador no topo</li>
+            <li>Tocar num item abre o leitor direto no versículo, com destaque</li>
+            <li>Remover item individual, copiar tudo, limpar tudo (pede confirmação)</li>
+            <li>Estado vazio bonito, com atalho "Fazer uma busca"</li>
+        </ul>
+        <div class="revert">Reverter: <code>git revert 905c2c9</code></div>
+    </div>
+
+    <div class="card">
+        <h3><span class="tag feat">Feat</span>Quiz Bíblico offline · <code>849617f</code></h3>
+        <ul class="clean">
+            <li>Banco local com 40 perguntas de múltipla escolha (<code>data/quizQuestions.ts</code> — fácil de expandir)</li>
+            <li>Rodadas de 10 perguntas sorteadas; alternativas embaralhadas a cada rodada</li>
+            <li>Resposta mostra acerto/erro na hora + <strong>referência bíblica para estudar</strong></li>
+            <li>Barra de progresso, placar no header, tela final com mensagem e selo de recorde</li>
+            <li>Funciona 100% offline; recorde salvo no aparelho</li>
+        </ul>
+        <div class="revert">Reverter: <code>git revert 849617f</code></div>
+    </div>
+
+    <div class="card">
+        <h3><span class="tag feat">Feat</span>Favoritar na Busca IA · <code>c2873c5</code></h3>
+        <p>A linha de ações do resultado (ouvir / copiar) ganhou a <strong>estrela de favoritos</strong>,
+        integrada aos mesmos favoritos do leitor e da Home. Era pendência do NORTEADOR.</p>
+        <div class="revert">Reverter: <code>git revert c2873c5</code></div>
+    </div>
+
+    <div class="card">
+        <h3><span class="tag feat">Feat</span>Progresso real em "Continuar lendo" · <code>6b52d3e</code></h3>
+        <p>A barra do cartão ficava <strong>sempre 100%</strong>. Agora mostra a posição real no livro
+        (capítulo atual ÷ total de capítulos). Ex.: João 12 → <em>"57% do livro"</em>.</p>
+        <div class="revert">Reverter: <code>git revert 6b52d3e</code></div>
+    </div>
+
+    <div class="card">
+        <h3><span class="tag feat">Feat</span>Botão de limpar dados do app · <code>2ffe2bb</code></h3>
+        <p>Seu pedido antigo do FEATURES_APROVADAS. No modal da conta (avatar da Home):
+        <strong>"Limpar dados do app neste aparelho"</strong> — pede confirmação, apaga histórico,
+        favoritos, preferências, versículo do dia e recorde do quiz, e recarrega o app limpo.</p>
+        <div class="revert">Reverter: <code>git revert 2ffe2bb</code></div>
+    </div>
+
+    <h2>🧪 Como testar</h2>
+    <div class="card">
+        <table>
+            <tr><th>O quê</th><th>Como</th></tr>
+            <tr><td>Persistência</td><td>Busque um versículo, recarregue a página (F5) — o histórico deve continuar lá</td></tr>
+            <tr><td>Histórico</td><td>Home → cartão Histórico → tocar num item abre o leitor no versículo</td></tr>
+            <tr><td>Quiz</td><td>Home → cartão Quiz → Começar → responda as 10 e veja o resultado</td></tr>
+            <tr><td>Favorito na busca</td><td>Busca IA → busque "sl 23 1" → passe o dedo/mouse no versículo → estrela</td></tr>
+            <tr><td>Progresso</td><td>Leia um capítulo avançado de um livro e volte à Home</td></tr>
+            <tr><td>Limpar dados</td><td>Avatar da Home → "Limpar dados do app neste aparelho"</td></tr>
+        </table>
+    </div>
+
+    <h2>🔜 Backlog sugerido (próximas sessões)</h2>
+    <div class="card">
+        <ul class="clean next">
+            <li><strong>Sincronização com a conta Google</strong> — Fase 3 do login: favoritos/histórico no Supabase (depende da Fase 1, que é configuração sua no Google/Supabase)</li>
+            <li><strong>Temas Kids / Católico / Pentecostal</strong> — suas anotações pedem mais identidade em cada um</li>
+            <li><strong>Sons</strong> — revisar o SoundEngine (reclamação: "estilo Atari", música ruim, falta som de hover)</li>
+            <li><strong>Mais perguntas no Quiz</strong> — o banco aceita quantas quisermos, dá até para separar por dificuldade</li>
+            <li><strong>Modal Sobre / Temas</strong> — deixar interativos e animados, como você anotou</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        Gerado por Claude Code em 02/07/2026 · Bíblia CrenTech — IA a serviço do Reino 📖✨
+    </div>
+</div>
+</body>
+</html>

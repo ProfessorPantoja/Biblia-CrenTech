@@ -3,6 +3,60 @@
 
 ---
 
+## 📅 Sessão: 02/07/2026 (aprimoramentos — fim dos "Em Construção")
+
+> Todos os commits são atômicos e reversíveis individualmente com
+> `git revert <hash>`. Relatório completo: `docs/RELATORIO_MELHORIAS_2026-07-02.html`.
+
+### 🐛 1. Correção crítica: dados apagados ao recarregar (`cc3a173`)
+
+**Sintoma**: histórico, favoritos e última leitura se perdiam ao recarregar o app
+(por isso a barra de histórico "sumia").
+
+**Causa**: o `AppContext` carregava o localStorage num `useEffect`, mas o efeito
+de salvar rodava antes com o estado vazio e sobrescrevia os dados.
+
+**Correção**: os dados agora são carregados de forma síncrona nos inicializadores
+de estado (sem corrida).
+
+### 🕘 2. Tela de Histórico real (`905c2c9`)
+
+- ✅ Substitui o placeholder "Em Construção" do cartão da Home
+- ✅ Lista os versículos buscados (mais recentes primeiro)
+- ✅ Tocar num item abre o leitor no versículo, com destaque
+- ✅ Remover item individual, copiar tudo, limpar tudo (com confirmação)
+- ✅ Estado vazio com atalho para a Busca IA
+
+### 🎮 3. Quiz Bíblico offline (`849617f`)
+
+- ✅ Substitui o último "Em Construção" do app
+- ✅ Banco local com 40 perguntas (`data/quizQuestions.ts`) — fácil de expandir
+- ✅ Rodadas de 10 perguntas sorteadas, alternativas embaralhadas
+- ✅ Feedback imediato com a referência bíblica de cada resposta
+- ✅ Placar, barra de progresso e recorde salvo no aparelho
+
+### ⭐ 4. Favoritar na Busca IA (`c2873c5`)
+
+- ✅ Estrela na linha de ações do resultado (junto de ouvir/copiar)
+- ✅ Integrada aos mesmos favoritos do leitor e da Home
+
+### 📊 5. Progresso real em "Continuar lendo" (`6b52d3e`)
+
+- ✅ A barra ficava sempre 100%; agora mostra capítulo atual / total do livro
+  (ex.: João 12 → "57% do livro")
+
+### 🧹 6. Botão de limpar dados (`2ffe2bb`)
+
+- ✅ Pedido antigo do FEATURES_APROVADAS (localStorage acumulava sem reset)
+- ✅ No modal da conta (avatar da Home): "Limpar dados do app neste aparelho"
+- ✅ Confirmação antes de apagar; recarrega o app limpo
+
+**Próximos passos sugeridos**: sincronizar favoritos/histórico com o Supabase
+quando logado (Fase 3 do login), melhorar temas Kids/Católico/Pentecostal,
+revisar sons (reclamações registradas no FEATURES_APROVADAS).
+
+---
+
 ## 📅 Sessão: 26/06/2026 (retomada do projeto)
 
 > Contexto: retomada após o projeto ficar parado desde nov/2025. Antes das
