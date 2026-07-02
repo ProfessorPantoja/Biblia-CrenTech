@@ -1,14 +1,33 @@
 import React, { useState } from 'react';
-import { X, LogOut } from 'lucide-react';
+import { X, LogOut, Trash2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { StorageService } from '../../services/StorageService';
 
 interface AuthModalProps {
     onClose: () => void;
 }
 
+// Tudo que o app guarda neste aparelho
+const LOCAL_DATA_KEYS = [
+    'bible_crentech_data',
+    'bible_crentech_daily_verse',
+    'bible_crentech_quiz_best'
+];
+
 const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
     const { user, loading, signInWithGoogle, signOut } = useAuth();
     const [busy, setBusy] = useState(false);
+
+    const handleClearData = () => {
+        const ok = window.confirm(
+            'Limpar os dados do app neste aparelho?\n\n' +
+            'Serão apagados: histórico de buscas, favoritos, última leitura, ' +
+            'tema, versão e recorde do quiz. Esta ação não pode ser desfeita.'
+        );
+        if (!ok) return;
+        LOCAL_DATA_KEYS.forEach(key => StorageService.clear(key));
+        window.location.reload();
+    };
 
     const handleLogin = async () => {
         setBusy(true);
@@ -85,6 +104,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
                         </button>
                     </div>
                 )}
+
+                {/* --- DADOS LOCAIS --- */}
+                <div className="mt-6 pt-4 border-t border-white/10">
+                    <button
+                        onClick={handleClearData}
+                        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm text-slate-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                    >
+                        <Trash2 size={15} />
+                        <span>Limpar dados do app neste aparelho</span>
+                    </button>
+                </div>
             </div>
         </div>
     );
