@@ -245,5 +245,125 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
         options: ['Davi', 'Salomão', 'Saul', 'Ezequias'],
         answerIndex: 1,
         reference: '1 Reis 3:12'
+    },
+    {
+        question: 'Quem foi vendido pelos próprios irmãos como escravo?',
+        options: ['Benjamim', 'José', 'Judá', 'Isaque'],
+        answerIndex: 1,
+        reference: 'Gênesis 37:28'
+    },
+    {
+        question: 'Qual profeta desafiou os profetas de Baal no monte Carmelo?',
+        options: ['Eliseu', 'Jeremias', 'Elias', 'Amós'],
+        answerIndex: 2,
+        reference: '1 Reis 18:20-39'
+    },
+    {
+        question: 'Quem era a sogra de Rute?',
+        options: ['Noemi', 'Orfa', 'Ana', 'Débora'],
+        answerIndex: 0,
+        reference: 'Rute 1:4'
+    },
+    {
+        question: 'Qual apóstolo andou sobre as águas em direção a Jesus?',
+        options: ['João', 'Tiago', 'André', 'Pedro'],
+        answerIndex: 3,
+        reference: 'Mateus 14:29'
+    },
+    {
+        question: 'Quem escreveu a carta aos Romanos?',
+        options: ['Pedro', 'Paulo', 'Tiago', 'João'],
+        answerIndex: 1,
+        reference: 'Romanos 1:1'
+    },
+    {
+        question: 'Quantos evangelhos existem no Novo Testamento?',
+        options: ['3', '4', '5', '12'],
+        answerIndex: 1,
+        reference: 'Mateus, Marcos, Lucas e João'
+    },
+    {
+        question: 'O que os magos ofereceram ao menino Jesus?',
+        options: ['Ouro, incenso e mirra', 'Prata, ouro e trigo', 'Pães, vinho e azeite', 'Ovelhas e pombas'],
+        answerIndex: 0,
+        reference: 'Mateus 2:11'
+    },
+    {
+        question: 'Em qual dia Deus descansou da criação?',
+        options: ['Terceiro', 'Sexto', 'Sétimo', 'Primeiro'],
+        answerIndex: 2,
+        reference: 'Gênesis 2:2'
+    },
+    {
+        question: 'Quem foi o primeiro rei de Israel?',
+        options: ['Davi', 'Salomão', 'Samuel', 'Saul'],
+        answerIndex: 3,
+        reference: '1 Samuel 10:1'
+    },
+    {
+        question: 'Qual mulher escondeu os espias israelitas em Jericó?',
+        options: ['Raabe', 'Ester', 'Míriam', 'Séfora'],
+        answerIndex: 0,
+        reference: 'Josué 2:1-6'
+    },
+    {
+        question: 'Que alimento Deus enviou do céu ao povo no deserto?',
+        options: ['Pão de cevada', 'Maná', 'Trigo', 'Mel'],
+        answerIndex: 1,
+        reference: 'Êxodo 16:14-15'
+    },
+    {
+        question: 'Quem foi curado da lepra ao mergulhar sete vezes no Jordão?',
+        options: ['Uzias', 'Geazi', 'Naamã', 'Ezequias'],
+        answerIndex: 2,
+        reference: '2 Reis 5:14'
+    },
+    {
+        question: 'Qual discípulo é chamado de "o discípulo amado"?',
+        options: ['Pedro', 'João', 'Tiago', 'Mateus'],
+        answerIndex: 1,
+        reference: 'João 13:23'
+    },
+    {
+        question: 'Quem apareceu conversando com Jesus na transfiguração?',
+        options: ['Abraão e Davi', 'Moisés e Elias', 'Enoque e Noé', 'Isaías e Jeremias'],
+        answerIndex: 1,
+        reference: 'Mateus 17:3'
+    },
+    {
+        question: 'Qual era o ofício de José, esposo de Maria?',
+        options: ['Pescador', 'Pastor', 'Carpinteiro', 'Ferreiro'],
+        answerIndex: 2,
+        reference: 'Mateus 13:55'
+    },
+    {
+        question: 'Quantos dias Jesus jejuou no deserto?',
+        options: ['7', '21', '30', '40'],
+        answerIndex: 3,
+        reference: 'Mateus 4:2'
+    },
+    {
+        question: 'O que aconteceu no dia de Pentecostes?',
+        options: ['A descida do Espírito Santo', 'A ressurreição de Jesus', 'A conversão de Paulo', 'A queda de Jericó'],
+        answerIndex: 0,
+        reference: 'Atos 2:1-4'
+    },
+    {
+        question: 'Quem foi a mãe do profeta Samuel?',
+        options: ['Ana', 'Raquel', 'Rebeca', 'Isabel'],
+        answerIndex: 0,
+        reference: '1 Samuel 1:20'
+    },
+    {
+        question: 'Quem olhou para trás e virou uma estátua de sal?',
+        options: ['A mulher de Noé', 'A mulher de Ló', 'Míriam', 'A mulher de Jó'],
+        answerIndex: 1,
+        reference: 'Gênesis 19:26'
+    },
+    {
+        question: 'Quem Jesus ressuscitou depois de quatro dias no túmulo?',
+        options: ['A filha de Jairo', 'O filho da viúva de Naim', 'Lázaro', 'Tabita'],
+        answerIndex: 2,
+        reference: 'João 11:43-44'
     }
 ];
