@@ -28,37 +28,39 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+interface SavedData {
+    history: VerseReference[];
+    theme: AppTheme;
+    version: BibleVersion;
+    lastReading: { book: string; chapter: number } | null;
+    favorites: VerseReference[];
+}
+
+// Carrega os dados de forma síncrona, antes do primeiro render.
+// Carregar num useEffect criava uma corrida com o efeito de salvar:
+// ele rodava primeiro com o estado inicial vazio e sobrescrevia o
+// localStorage (com StrictMode, os dados eram apagados a cada reload).
+const loadSavedData = (): SavedData => {
+    const saved = StorageService.load<Partial<SavedData>>('bible_crentech_data', {});
+    return {
+        history: Array.isArray(saved.history) ? saved.history : [],
+        theme: saved.theme ?? 'hitech',
+        version: saved.version ?? 'ACF',
+        lastReading: saved.lastReading ?? null,
+        favorites: Array.isArray(saved.favorites) ? saved.favorites : []
+    };
+};
+
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [bibleVersion, setBibleVersion] = useState<BibleVersion>('ACF');
-    const [appTheme, setAppTheme] = useState<AppTheme>('hitech');
-    const [history, setHistory] = useState<VerseReference[]>([]);
-    const [currentIndex, setCurrentIndex] = useState<number>(-1);
+    const [savedData] = useState(loadSavedData);
+    const [bibleVersion, setBibleVersion] = useState<BibleVersion>(savedData.version);
+    const [appTheme, setAppTheme] = useState<AppTheme>(savedData.theme);
+    const [history, setHistory] = useState<VerseReference[]>(savedData.history);
+    const [currentIndex, setCurrentIndex] = useState<number>(savedData.history.length - 1);
     const [isMuted, setIsMuted] = useState(true);
     const [readerState, setReaderState] = useState<{ book: string; chapter: number; verse?: number } | null>(null);
-    const [lastReading, setLastReading] = useState<{ book: string; chapter: number } | null>(null);
-    const [favorites, setFavorites] = useState<VerseReference[]>([]);
-
-    // Load Data
-    useEffect(() => {
-        const savedData = StorageService.load('bible_crentech_data', {
-            history: [] as VerseReference[],
-            theme: 'hitech' as AppTheme,
-            version: 'ACF' as BibleVersion,
-            lastReading: null as { book: string; chapter: number } | null,
-            favorites: [] as VerseReference[]
-        });
-
-        if (savedData.history && Array.isArray(savedData.history)) {
-            setHistory(savedData.history);
-            setCurrentIndex(savedData.history.length > 0 ? savedData.history.length - 1 : -1);
-        }
-        if (savedData.theme) setAppTheme(savedData.theme);
-        if (savedData.version) setBibleVersion(savedData.version);
-        if (savedData.lastReading) setLastReading(savedData.lastReading);
-        if (savedData.favorites && Array.isArray(savedData.favorites)) {
-            setFavorites(savedData.favorites);
-        }
-    }, []);
+    const [lastReading, setLastReading] = useState<{ book: string; chapter: number } | null>(savedData.lastReading);
+    const [favorites, setFavorites] = useState<VerseReference[]>(savedData.favorites);
 
     // Save Data
     useEffect(() => {
