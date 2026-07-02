@@ -1,16 +1,13 @@
 import React from 'react';
 import { useNavigation } from '../contexts/NavigationContext';
-import { useApp } from '../contexts/AppContext';
-import { THEMES } from '../config/constants';
 import HomeScreen from '../components/HomeScreen';
 import SearchMode from '../components/SearchMode';
 import ReaderMode from '../components/ReaderMode';
 import HistoryScreen from '../components/HistoryScreen';
+import QuizScreen from '../components/QuizScreen';
 
 const AppRouter: React.FC = () => {
     const { currentView, navigate } = useNavigation();
-    const { appTheme } = useApp();
-    const currentTheme = THEMES[appTheme];
 
     return (
         <>
@@ -34,21 +31,7 @@ const AppRouter: React.FC = () => {
 
             {currentView === 'history' && <HistoryScreen />}
 
-            {/* Placeholders for other views */}
-            {currentView === 'quiz' && (
-                <div className={`min-h-screen flex items-center justify-center ${currentTheme.bgClass} text-white`}>
-                    <div className="text-center">
-                        <h2 className="text-2xl font-bold mb-4">Em Construção 🚧</h2>
-                        <p className="opacity-70 mb-6">Esta funcionalidade está sendo implementada.</p>
-                        <button
-                            onClick={() => navigate('home')}
-                            className="px-6 py-2 bg-amber-500 text-black font-bold rounded-full"
-                        >
-                            Voltar para Home
-                        </button>
-                    </div>
-                </div>
-            )}
+            {currentView === 'quiz' && <QuizScreen />}
         </>
     );
 };
