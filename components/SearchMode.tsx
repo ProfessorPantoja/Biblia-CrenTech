@@ -400,6 +400,7 @@ const SearchMode: React.FC = () => {
                     accentColorClass={currentTheme.accentClass}
                     isFavorite={isCurrentFavorite}
                     onToggleFavorite={handleToggleFavorite}
+                    version={bibleVersion}
                     onReferenceClick={() => {
                         if (currentVerse) {
                             setReaderState({

@@ -1,11 +1,12 @@
 import React from 'react';
 import { AppTheme } from '../types';
 import { THEMES } from '../config/constants';
-import { Mic, BookOpen, History, Gamepad2, Share2, ChevronRight, Download, Palette } from 'lucide-react';
+import { Mic, BookOpen, History, Gamepad2, Share2, ChevronRight, Download, Palette, ImageDown } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigation } from '../contexts/NavigationContext';
 import AuthModal from './modals/AuthModal';
+import VerseCardModal from './modals/VerseCardModal';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { useBible } from '../hooks/useBible';
 import { FEATURED_VERSES } from '../data/featuredVerses';
@@ -35,6 +36,7 @@ const HomeScreen: React.FC = () => {
     const [dailyVerse, setDailyVerse] = React.useState(FALLBACK_DAILY_VERSE);
     const [isDailyVerseLoading, setIsDailyVerseLoading] = React.useState(true);
     const [lastRandomReference, setLastRandomReference] = React.useState<string | null>(null);
+    const [showVerseCard, setShowVerseCard] = React.useState(false);
 
     const cycleTheme = () => {
         const themeKeys: AppTheme[] = ['hitech', 'jesus', 'medieval', 'kids', 'catholic', 'pentecostal'];
@@ -292,7 +294,16 @@ const HomeScreen: React.FC = () => {
 
             {/* VERSICLE OF THE DAY CARD */}
             <div className={`relative rounded-2xl p-6 flex flex-col space-y-4 backdrop-blur-xl bg-white/5 border border-amber-400/20 shadow-xl z-10`}>
-                <h2 className="text-xs font-bold uppercase tracking-widest text-amber-400">Versículo do Dia</h2>
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xs font-bold uppercase tracking-widest text-amber-400">Versículo do Dia</h2>
+                    <button
+                        onClick={() => !isDailyVerseLoading && setShowVerseCard(true)}
+                        className={`p-2 -m-2 rounded-full text-amber-400/80 hover:text-amber-300 hover:bg-amber-400/10 active:scale-95 transition-all ${isDailyVerseLoading ? 'opacity-40 cursor-not-allowed' : ''}`}
+                        title="Criar card do versículo (imagem)"
+                    >
+                        <ImageDown size={18} />
+                    </button>
+                </div>
                 <blockquote className="flex-grow">
                     <p className={`text-xl ${currentTheme.textClass} font-medium leading-relaxed`}>
                         {isDailyVerseLoading ? 'Carregando versículo do dia...' : `"${dailyVerse.text}"`}
@@ -467,6 +478,13 @@ const HomeScreen: React.FC = () => {
             </footer>
 
             {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+
+            {showVerseCard && (
+                <VerseCardModal
+                    data={{ text: dailyVerse.text, reference: dailyVerse.reference, version: 'ACF' }}
+                    onClose={() => setShowVerseCard(false)}
+                />
+            )}
 
         </div>
     );

@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { VerseReference } from '../types';
-import { Copy, Check, Volume2, Star } from 'lucide-react';
+import { Copy, Check, Volume2, Star, ImageDown } from 'lucide-react';
+import VerseCardModal from './modals/VerseCardModal';
 
 interface VerseDisplayProps {
   data: VerseReference | null;
@@ -10,6 +11,7 @@ interface VerseDisplayProps {
   onReferenceClick?: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  version?: string;
 }
 
 const VerseDisplay: React.FC<VerseDisplayProps> = ({
@@ -18,10 +20,12 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({
   accentColorClass = "text-bible-gold",
   onReferenceClick,
   isFavorite = false,
-  onToggleFavorite
+  onToggleFavorite,
+  version
 }) => {
   const [copied, setCopied] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [showCard, setShowCard] = useState(false);
 
   if (!data) return null;
 
@@ -98,7 +102,26 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({
             <Star size={20} fill={isFavorite ? 'currentColor' : 'none'} />
           </button>
         )}
+
+        <button
+          onClick={() => setShowCard(true)}
+          className="p-3 rounded-full shadow-lg transition-transform hover:scale-110 active:scale-95 bg-slate-800/80 text-slate-300 hover:bg-amber-500 hover:text-white"
+          title="Criar card do versículo (imagem)"
+        >
+          <ImageDown size={20} />
+        </button>
       </div>
+
+      {showCard && (
+        <VerseCardModal
+          data={{
+            text: data.text,
+            reference: `${data.book} ${data.chapter}:${data.verse}`,
+            version
+          }}
+          onClose={() => setShowCard(false)}
+        />
+      )}
     </div>
   );
 };
