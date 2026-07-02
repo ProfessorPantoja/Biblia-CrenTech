@@ -5,6 +5,7 @@ import { THEMES } from '../config/constants';
 import HomeScreen from '../components/HomeScreen';
 import SearchMode from '../components/SearchMode';
 import ReaderMode from '../components/ReaderMode';
+import HistoryScreen from '../components/HistoryScreen';
 
 const AppRouter: React.FC = () => {
     const { currentView, navigate } = useNavigation();
@@ -31,8 +32,10 @@ const AppRouter: React.FC = () => {
 
             {currentView === 'reader' && <ReaderMode />}
 
+            {currentView === 'history' && <HistoryScreen />}
+
             {/* Placeholders for other views */}
-            {(currentView === 'history' || currentView === 'quiz') && (
+            {currentView === 'quiz' && (
                 <div className={`min-h-screen flex items-center justify-center ${currentTheme.bgClass} text-white`}>
                     <div className="text-center">
                         <h2 className="text-2xl font-bold mb-4">Em Construção 🚧</h2>
