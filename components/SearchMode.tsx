@@ -33,7 +33,9 @@ const SearchMode: React.FC = () => {
         setCurrentIndex,
         isMuted,
         toggleMute,
-        setReaderState
+        setReaderState,
+        favorites,
+        toggleFavorite
     } = useApp();
 
     const { navigate } = useNavigation();
@@ -57,6 +59,16 @@ const SearchMode: React.FC = () => {
     const { getVerses: getLocalVerses } = useBible();
 
     const currentVerse = currentIndex >= 0 ? history[currentIndex] : null;
+
+    const isCurrentFavorite = currentVerse
+        ? favorites.some(v => v.book === currentVerse.book && v.chapter === currentVerse.chapter && v.verse === currentVerse.verse)
+        : false;
+
+    const handleToggleFavorite = () => {
+        if (!currentVerse) return;
+        SoundEngine.playClick();
+        toggleFavorite(currentVerse);
+    };
 
     // Donation Ticker Timer
     useEffect(() => {
@@ -386,6 +398,8 @@ const SearchMode: React.FC = () => {
                     data={currentVerse}
                     textColorClass={currentTheme.textClass}
                     accentColorClass={currentTheme.accentClass}
+                    isFavorite={isCurrentFavorite}
+                    onToggleFavorite={handleToggleFavorite}
                     onReferenceClick={() => {
                         if (currentVerse) {
                             setReaderState({

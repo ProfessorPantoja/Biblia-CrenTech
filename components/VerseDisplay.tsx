@@ -1,20 +1,24 @@
 
 import React, { useState } from 'react';
 import { VerseReference } from '../types';
-import { Copy, Check, Volume2 } from 'lucide-react';
+import { Copy, Check, Volume2, Star } from 'lucide-react';
 
 interface VerseDisplayProps {
   data: VerseReference | null;
   textColorClass?: string;
   accentColorClass?: string;
   onReferenceClick?: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 const VerseDisplay: React.FC<VerseDisplayProps> = ({
   data,
   textColorClass = "text-slate-100",
   accentColorClass = "text-bible-gold",
-  onReferenceClick
+  onReferenceClick,
+  isFavorite = false,
+  onToggleFavorite
 }) => {
   const [copied, setCopied] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -84,6 +88,16 @@ const VerseDisplay: React.FC<VerseDisplayProps> = ({
         >
           {copied ? <Check size={20} /> : <Copy size={20} />}
         </button>
+
+        {onToggleFavorite && (
+          <button
+            onClick={onToggleFavorite}
+            className={`p-3 rounded-full shadow-lg transition-transform hover:scale-110 active:scale-95 ${isFavorite ? 'bg-amber-500 text-white' : 'bg-slate-800/80 text-slate-300 hover:bg-amber-500 hover:text-white'}`}
+            title={isFavorite ? 'Remover dos favoritos' : 'Salvar nos favoritos'}
+          >
+            <Star size={20} fill={isFavorite ? 'currentColor' : 'none'} />
+          </button>
+        )}
       </div>
     </div>
   );
